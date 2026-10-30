@@ -1,0 +1,8 @@
+# Task 010 — Read With Me screen
+- **Model:** Gemini 3.8 Flash for layout and strings; switch to GPT-6.1 Sol (new session) if tap/state logic gets messy. **Session:** NEW.
+- **Read:** AGENTS.md, docs/PROJECT_CONCEPT.md (Read With Me), docs/ARCHITECTURE.md (i18n, RTL and languages), docs/PACK_SPEC.md (Reader linking), docs/CONTENT_GUIDELINES.md.
+- **Goal:** the first real screen.
+- **Do:** `features/reader/ReaderPage.tsx`: choose pack and text; top area shows 1-3 segments (prev/next) with linked tokens highlighted; tapping selects a token; bottom area has `ui/ImageBox` and `ui/ExplainBox` (image or placeholder; meaning + example) plus a disabled audio button. Content area uses the pack `dir`; boxes mirror in RTL. Explanation language fallback: UI language, pack language, first available; each explanation rendered with its own lang/dir, `<bdi>` around embedded terms, references forced LTR. Teacher mode only: tapping an unlinked token offers "Add explanation" which creates a new item (slug id, suffix on collision), writes an annotation for that occurrence, and ALL occurrences of the word then link; a second choice "Only this occurrence" writes an `override`. Source text is never editable. Show a font test panel (teacher mode) rendering a sample line, to support decision D017.
+- **Allowed files:** `src/features/reader/*`, `src/ui/ImageBox.tsx`, `src/ui/ExplainBox.tsx`, routes in `src/app/`, i18n files, tests.
+- **Done when:** works with `en-vocab` (LTR) and `ar-sample-text` (RTL) without code differences; large tap targets; adding content to an unlinked word persists and re-links after reload; `npm run check` passes.
+- **Out of scope:** audio recording/playback (Phase 4), drag-to-match, games, the real Quran pack (task 011, needs O004 and O005).

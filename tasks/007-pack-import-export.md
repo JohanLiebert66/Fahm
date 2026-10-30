@@ -1,0 +1,8 @@
+# Task 007 — Pack import and export
+- **Model:** GPT-6.1 Sol (medium). **Session:** NEW.
+- **Read:** AGENTS.md, docs/PACK_SPEC.md (Bindings, Filename inference, Import safety, Re-import, Validation errors, Audio formats), docs/ARCHITECTURE.md (Transactions), docs/DECISIONS.md D021-D026.
+- **Goal:** import a pack from a .zip or a folder, and export it back, losslessly and safely.
+- **Do:** `importPack.ts` (zip via JSZip; folder via a list of `File` objects with relative paths, so both the File System Access API and `<input webkitdirectory>` work). Pipeline: read bounded -> validate everything with task 005 -> apply bindings.json, then filename inference for unlisted files -> check quota -> ONE transaction. Enforce all limits and path rules from "Import safety". Handle an existing pack id with the two options (copy default, replace keeping progress for surviving item ids). `exportPack.ts` writes a valid pack including bindings.json, annotations, assets with MIME-derived extensions. `features/teacher/ImportPack.tsx`: picker, report (counts, errors, warnings), conflict dialog; strings via i18n.
+- **Allowed files:** `src/storage/importPack.ts`, `exportPack.ts`, `src/features/teacher/ImportPack.tsx`, i18n files, tests.
+- **Done when:** round-trip test (import -> export -> import) gives equal items, texts (incl. ref), annotations and bindings; invalid or hostile archives (path traversal, duplicate paths case-insensitive, too many entries, oversized expanded data, nested archive) import nothing and report why; a forced write failure changes nothing; `npm run check` passes.
+- **Out of scope:** drag-to-match UI (Phase 4), whole-app backup (Phase 6), merge mode.
