@@ -7,5 +7,9 @@
   "teacher": "Teacher",
   "settings": "Settings",
   "language": "Language",
-  "switchToLanguage": "العربية"
+  "switchToLanguage": "العربية",
+  "teacherGateAction": "Enter teacher mode (hold for 3 seconds)",
+  "teacherMode": "Teacher Mode",
+  "exitTeacherMode": "Exit teacher mode",
+  "teacherHomeDescription": "Teacher tools and settings will appear here."
 }

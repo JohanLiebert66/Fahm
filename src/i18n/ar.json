@@ -7,5 +7,9 @@
   "teacher": "المعلم",
   "settings": "الإعدادات",
   "language": "اللغة",
-  "switchToLanguage": "English"
+  "switchToLanguage": "English",
+  "teacherGateAction": "الدخول إلى وضع المعلم (اضغط مطولاً لمدة 3 ثوانٍ)",
+  "teacherMode": "وضع المعلم",
+  "exitTeacherMode": "الخروج من وضع المعلم",
+  "teacherHomeDescription": "ستظهر أدوات المعلم والإعدادات هنا."
 }

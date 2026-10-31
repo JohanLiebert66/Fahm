@@ -1,7 +1,19 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { App } from './App';
+import { ModeProvider } from './ModeProvider';
 import { changeLanguage } from '../i18n';
+
+function renderApp(initialEntries = ['/'], initialMode: 'child' | 'teacher' = 'child') {
+  return render(
+    <MemoryRouter initialEntries={initialEntries}>
+      <ModeProvider initialMode={initialMode}>
+        <App />
+      </ModeProvider>
+    </MemoryRouter>
+  );
+}
 
 describe('App Shell', () => {
   beforeEach(async () => {
@@ -15,8 +27,8 @@ describe('App Shell', () => {
     localStorage.clear();
   });
 
-  it('renders the header with ONLY the language toggle button', () => {
-    render(<App />);
+  it('renders the header with teacher entry button and language toggle in child mode', () => {
+    renderApp();
 
     const header = screen.getByRole('banner');
     expect(header).toBeInTheDocument();
@@ -24,20 +36,19 @@ describe('App Shell', () => {
     // Header should contain the title
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Fahm');
 
-    // Header has exactly one button: the language toggle
-    const buttonsInHeader = header.querySelectorAll('button');
-    expect(buttonsInHeader).toHaveLength(1);
-    expect(buttonsInHeader[0]).toHaveTextContent('العربية');
+    // Header has the teacher gate button and language toggle
+    const teacherGateBtn = screen.getByRole('button', {
+      name: 'Enter teacher mode (hold for 3 seconds)',
+    });
+    expect(teacherGateBtn).toBeInTheDocument();
 
-    // Confirm no teacher or settings buttons exist anywhere
-    expect(screen.queryByText(/teacher/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/المعلم/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/settings/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/الإعدادات/)).not.toBeInTheDocument();
+    const langToggle = screen.getByRole('button', { name: 'Language' });
+    expect(langToggle).toBeInTheDocument();
+    expect(langToggle).toHaveTextContent('العربية');
   });
 
   it('renders exactly four large buttons for child mode', () => {
-    render(<App />);
+    renderApp();
 
     const main = screen.getByRole('main');
     expect(main).toBeInTheDocument();
@@ -53,10 +64,10 @@ describe('App Shell', () => {
   });
 
   it('ensures all interactive buttons have >= 48px touch target classes', () => {
-    render(<App />);
+    renderApp();
 
     const allButtons = screen.getAllByRole('button');
-    expect(allButtons.length).toBeGreaterThanOrEqual(5); // 1 header toggle + 4 cards
+    expect(allButtons.length).toBeGreaterThanOrEqual(6); // 2 header buttons + 4 cards
 
     for (const btn of allButtons) {
       expect(btn.className).toMatch(/min-w-\[48px\]/);
@@ -64,8 +75,27 @@ describe('App Shell', () => {
     }
   });
 
+  it('enters teacher mode after holding teacher gate button for 3 seconds', () => {
+    vi.useFakeTimers();
+    renderApp();
+
+    const gateBtn = screen.getByRole('button', {
+      name: 'Enter teacher mode (hold for 3 seconds)',
+    });
+
+    fireEvent.pointerDown(gateBtn, { button: 0 });
+    act(() => {
+      vi.advanceTimersByTime(3050);
+    });
+
+    // Should now show teacher mode screen
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Teacher Mode');
+    expect(screen.getByRole('button', { name: 'Exit teacher mode' })).toBeInTheDocument();
+    vi.restoreAllMocks();
+  });
+
   it('toggles language, switches direction to RTL, and updates UI labels', async () => {
-    render(<App />);
+    renderApp();
 
     // Initial state: English / ltr
     expect(document.documentElement.lang).toBe('en');
@@ -89,6 +119,11 @@ describe('App Shell', () => {
     expect(screen.getByText('العب')).toBeInTheDocument();
     expect(screen.getByText('تدرّب')).toBeInTheDocument();
     expect(screen.getByText('اقرأ معي')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: 'الدخول إلى وضع المعلم (اضغط مطولاً لمدة 3 ثوانٍ)',
+      })
+    ).toBeInTheDocument();
 
     // Click again to switch back to English
     await act(async () => {
