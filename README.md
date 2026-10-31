@@ -48,6 +48,19 @@ Individual check scripts:
 - `npm run test` — Vitest unit tests
 - `npm run build` — Production build
 
+## Deployment
+
+GitHub Pages deployment is automated via GitHub Actions on every push to `main` (or via manual trigger with `workflow_dispatch`).
+
+To enable GitHub Pages in the repository:
+1. Go to **Settings** > **Pages** in the repository.
+2. Under **Build and deployment** > **Source**, choose **GitHub Actions**.
+
+Once deployed, the app is hosted at:
+`https://<username>.github.io/<repo-name>/`
+
+Because the app uses `HashRouter` and relative asset paths (`base: './'`), all routes and assets resolve correctly under the repository sub-path without server-side rewrite rules.
+
 ## License
 
 MIT License - see [LICENSE](./LICENSE) for details.
