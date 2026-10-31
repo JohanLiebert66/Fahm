@@ -1,0 +1,55 @@
+[
+  {
+    "path": "images/pencil.svg",
+    "item": "pencil",
+    "role": "image",
+    "order": 1,
+    "credit": "Fixture author",
+    "license": "CC0-1.0"
+  },
+  {
+    "path": "images/bag.svg",
+    "item": "bag",
+    "role": "image",
+    "order": 2,
+    "credit": "Fixture author",
+    "license": "CC0-1.0"
+  },
+  {
+    "path": "images/desk.svg",
+    "item": "desk",
+    "role": "image",
+    "order": 3,
+    "credit": "Fixture author",
+    "license": "CC0-1.0"
+  },
+  {
+    "path": "images/chair.svg",
+    "item": "chair",
+    "role": "image",
+    "order": 4,
+    "credit": "Fixture author",
+    "license": "CC0-1.0"
+  },
+  {
+    "path": "images/lamp.svg",
+    "item": "lamp",
+    "role": "image",
+    "order": 5,
+    "credit": "Fixture author",
+    "license": "CC0-1.0"
+  },
+  {
+    "path": "images/ruler.svg",
+    "item": "ruler",
+    "role": "image",
+    "order": 6,
+    "credit": "Fixture author",
+    "license": "CC0-1.0"
+  },
+
+  {
+    "path": "puzzles/classroom.svg",
+    "role": "puzzle"
+  }
+]

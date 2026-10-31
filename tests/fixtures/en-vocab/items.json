@@ -1,0 +1,92 @@
+[
+  {
+    "id": "pencil",
+    "term": "pencil",
+    "forms": [
+      "pencils"
+    ],
+    "group": "stationery",
+    "level": 1,
+    "explain": {
+      "en": {
+        "meaning": "A classroom pencil.",
+        "example": "This is a pencil."
+      }
+    }
+  },
+  {
+    "id": "bag",
+    "term": "bag",
+    "forms": [
+      "bags"
+    ],
+    "group": "classroom",
+    "level": 1,
+    "explain": {
+      "en": {
+        "meaning": "A classroom bag.",
+        "example": "This is a bag."
+      }
+    }
+  },
+  {
+    "id": "desk",
+    "term": "desk",
+    "forms": [
+      "desks"
+    ],
+    "group": "classroom",
+    "level": 1,
+    "explain": {
+      "en": {
+        "meaning": "A classroom desk.",
+        "example": "This is a desk."
+      }
+    }
+  },
+  {
+    "id": "chair",
+    "term": "chair",
+    "forms": [
+      "chairs"
+    ],
+    "group": "classroom",
+    "level": 1,
+    "explain": {
+      "en": {
+        "meaning": "A classroom chair.",
+        "example": "This is a chair."
+      }
+    }
+  },
+  {
+    "id": "lamp",
+    "term": "lamp",
+    "forms": [
+      "lamps"
+    ],
+    "group": "classroom",
+    "level": 1,
+    "explain": {
+      "en": {
+        "meaning": "A classroom lamp.",
+        "example": "This is a lamp."
+      }
+    }
+  },
+  {
+    "id": "ruler",
+    "term": "ruler",
+    "forms": [
+      "rulers"
+    ],
+    "group": "stationery",
+    "level": 1,
+    "explain": {
+      "en": {
+        "meaning": "A classroom ruler.",
+        "example": "This is a ruler."
+      }
+    }
+  }
+]

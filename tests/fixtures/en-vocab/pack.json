@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "en-vocab",
+  "title": {
+    "en": "Classroom vocabulary"
+  },
+  "lang": "en",
+  "dir": "ltr",
+  "author": "Fahm fixtures",
+  "license": "CC0-1.0",
+  "source": "Original work — synthetic test fixture",
+  "description": "Invented educational test data, not a quotation."
+}

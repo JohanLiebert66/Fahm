@@ -1,0 +1,14 @@
+{
+  "id": "everyday",
+  "title": {
+    "en": "Invented everyday sentence"
+  },
+  "ref": "Synthetic, non-religious",
+  "segments": [
+    {
+      "id": "1",
+      "ref": "Invented line",
+      "text": "دَفْتَرِي فَوْقَ طَاوِلَتِي."
+    }
+  ]
+}

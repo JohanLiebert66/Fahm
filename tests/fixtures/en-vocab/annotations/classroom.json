@@ -1,0 +1,24 @@
+[
+  {
+    "segment": "1",
+    "start": 2,
+    "end": 8,
+    "text": "pencil",
+    "item": "pencil"
+  },
+  {
+    "segment": "1",
+    "start": 15,
+    "end": 18,
+    "text": "bag",
+    "item": "bag",
+    "override": {
+      "explain": {
+        "en": {
+          "meaning": "A school bag.",
+          "example": "Carry the bag."
+        }
+      }
+    }
+  }
+]

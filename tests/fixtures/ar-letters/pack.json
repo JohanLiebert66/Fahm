@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "ar-letters",
+  "title": {
+    "ar": "حُرُوفٌ تَجْرِيبِيَّةٌ"
+  },
+  "lang": "ar",
+  "dir": "rtl",
+  "author": "Fahm fixtures",
+  "license": "CC0-1.0",
+  "source": "Original work — synthetic test fixture",
+  "description": "Invented educational test data, not a quotation."
+}

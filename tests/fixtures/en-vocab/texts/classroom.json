@@ -1,0 +1,14 @@
+{
+  "id": "classroom",
+  "title": {
+    "en": "Invented classroom sentence"
+  },
+  "ref": "Synthetic example A",
+  "segments": [
+    {
+      "id": "1",
+      "ref": "Line A",
+      "text": "A pencil and a bag."
+    }
+  ]
+}

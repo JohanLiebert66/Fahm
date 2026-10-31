@@ -1,0 +1,20 @@
+[
+  {
+    "id": "دفتر",
+    "term": "دَفْتَرِي",
+    "explain": {
+      "en": {
+        "meaning": "My notebook."
+      }
+    }
+  },
+  {
+    "id": "طاولة",
+    "term": "طَاوِلَتِي",
+    "explain": {
+      "en": {
+        "meaning": "My table."
+      }
+    }
+  }
+]
