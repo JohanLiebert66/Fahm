@@ -8,6 +8,7 @@ import { ChildHome } from './ChildHome';
 import { TeacherHome } from '../features/teacher/TeacherHome';
 import { ImportPack } from '../features/teacher/ImportPack';
 import { ReaderPage } from '../features/reader/ReaderPage';
+import { TeacherBar } from './TeacherBar';
 
 export function App() {
   const { t, i18n } = useTranslation();
@@ -52,6 +53,8 @@ export function App() {
           </button>
         </div>
       </header>
+
+      <TeacherBar />
 
       <main className="flex-1 flex flex-col items-center justify-center p-6">
         <Routes>

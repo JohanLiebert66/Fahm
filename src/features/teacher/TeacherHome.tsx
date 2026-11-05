@@ -1,16 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
-import { useMode } from '../../app/ModeProvider';
+import { Link } from 'react-router-dom';
 
 export function TeacherHome() {
   const { t } = useTranslation();
-  const { exitTeacherMode } = useMode();
-  const navigate = useNavigate();
-
-  const handleExit = () => {
-    exitTeacherMode();
-    navigate('/');
-  };
 
   return (
     <div className="min-h-full flex flex-col items-center justify-center p-6 text-center">
@@ -30,13 +22,6 @@ export function TeacherHome() {
         <Link to="/teacher/import" className="min-w-[48px] min-h-[48px] flex items-center rounded-xl p-3 bg-indigo-50">
           {t('packImport.title')}
         </Link>
-        <button
-          type="button"
-          onClick={handleExit}
-          className="min-w-[48px] min-h-[48px] px-6 py-3 rounded-xl bg-slate-800 text-white font-medium hover:bg-slate-700 active:bg-slate-900 transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-        >
-          {t('exitTeacherMode')}
-        </button>
       </div>
     </div>
   );

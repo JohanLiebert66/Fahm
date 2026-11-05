@@ -4,7 +4,7 @@ Update this file at the end of every task (3-5 lines). It is the hand-off betwee
 
 ## Status
 - Phase: 1 in progress
-- Task 010a (Read-only child reader): complete; reader routes, selection, explanations and image lifecycle verified.
+- Task 003b (Teacher mode bar): complete; universal teacher navigation bar, exit action, and child-mode redirection verified.
 - Next task: awaiting selection.
 
 ## Done
@@ -47,6 +47,10 @@ Update this file at the end of every task (3-5 lines). It is the hand-off betwee
 - Explanation fallback/occurrence overrides, per-block language/direction, embedded-term isolation and LTR references implemented; first selected image only, term alt text, calm placeholders and localized disabled audio; existing Cairo retained.
 - Injectable asset URLs revoke on selection/segment changes, unmount and late completion; route loads reject stale results, including away-and-back navigation. Synthetic en/ar fixtures, missing/error states and read-only database snapshots covered without Blob round-trips.
 - Verification: `npm run check` passes lint/typecheck and 896 tests/58 files; build and `git diff --check` pass. Build retains the >500 kB chunk warning; no dependencies, schema/core/storage changes, teacher editing or commit.
+
+- Task 003b: universal <nav> TeacherBar rendered in normal document flow on all routes when in teacher mode; includes visible "Teacher mode" text, Link to `/teacher`, and Exit button navigating to `/` and restoring child mode; completely hidden in child mode.
+- Consolidated exit action into TeacherBar, removing redundant exit button from TeacherHome; all interactive targets >= 48px, logical CSS only, responsive 375px wrapping, and key-parity i18n in English and Arabic.
+- Verification: `npm run check` passes lint, typecheck, and 908 tests across 59 files; `npm run build` passes; child-mode guard redirection verified without new dependencies or commit.
 
 ## Known issues / notes
 - Docs changed after the first pack: ARCHITECTURE, PACK_SPEC, DECISIONS, AGENTS, tasks 005-010.

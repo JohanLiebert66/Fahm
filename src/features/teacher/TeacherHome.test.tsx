@@ -1,14 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import '../../i18n';
-import { ModeProvider, useMode } from '../../app/ModeProvider';
+import { ModeProvider } from '../../app/ModeProvider';
 import { TeacherHome } from './TeacherHome';
-
-function ModeWatcher() {
-  const { mode } = useMode();
-  return <span data-testid="current-mode">{mode}</span>;
-}
 
 describe('TeacherHome', () => {
   it('links to the pack import tool with a large touch target', () => {
@@ -18,7 +13,7 @@ describe('TeacherHome', () => {
     expect(link.className).toContain('min-h-[48px]');
     expect(link.className).toContain('min-w-[48px]');
   });
-  it('renders teacher placeholder and exit button with >= 48px touch target', () => {
+  it('renders teacher placeholder and does not render a local exit button', () => {
     render(
       <MemoryRouter initialEntries={['/teacher']}>
         <ModeProvider initialMode="teacher">
@@ -28,32 +23,6 @@ describe('TeacherHome', () => {
     );
 
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Teacher Mode');
-    const exitButton = screen.getByRole('button', { name: 'Exit teacher mode' });
-    expect(exitButton).toBeInTheDocument();
-    expect(exitButton.className).toMatch(/min-w-\[48px\]/);
-    expect(exitButton.className).toMatch(/min-h-\[48px\]/);
-  });
-
-  it('clicking exit button exits teacher mode and navigates to /', () => {
-    render(
-      <MemoryRouter initialEntries={['/teacher']}>
-        <ModeProvider initialMode="teacher">
-          <ModeWatcher />
-          <Routes>
-            <Route path="/" element={<div>Child Screen Returned</div>} />
-            <Route path="/teacher" element={<TeacherHome />} />
-          </Routes>
-        </ModeProvider>
-      </MemoryRouter>
-    );
-
-    expect(screen.getByTestId('current-mode')).toHaveTextContent('teacher');
-    expect(screen.queryByText('Child Screen Returned')).not.toBeInTheDocument();
-
-    const exitBtn = screen.getByRole('button', { name: 'Exit teacher mode' });
-    fireEvent.click(exitBtn);
-
-    expect(screen.getByTestId('current-mode')).toHaveTextContent('child');
-    expect(screen.getByText('Child Screen Returned')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Exit teacher mode' })).not.toBeInTheDocument();
   });
 });
