@@ -4,7 +4,7 @@ Update this file at the end of every task (3-5 lines). It is the hand-off betwee
 
 ## Status
 - Phase: 1 in progress
-- Task 006 (Storage layer): DONE. Exact Dexie v1 tables, pack-derived stored records, eight repositories and migration registration; no UI or import/export.
+- Task 007 (Pack import/export): complete; full checks and final independent review passed.
 - Next task: awaiting selection.
 
 ## Done
@@ -19,6 +19,11 @@ Update this file at the end of every task (3-5 lines). It is the hand-off betwee
 - Task 006: real multi-table rollback and atomic pack-deletion/isolation tests pass; default-profile initialization is transactional and safe across concurrent connections; source texts remain immutable.
 - Typed storage errors use storage-local i18n keys; persist/estimate wrappers handle missing APIs and rejected calls without throwing. Added only fake-indexeddb (dev), including the explicitly approved lockfile update; i18n/setup untouched.
 - Verification: npm run check passes (161 tests across 24 files), npm run build passes, npm ci --dry-run --ignore-scripts passes; every pre-existing lockfile dependency record is unchanged.
+- Task 007: real ZIP/folder pickers at `/teacher/import`, bilingual reports/validation diagnostics and copy-default/replace dialog; small transfer helpers, no dependency or database-schema changes.
+- Import checks raw ZIP records, normalizes Windows separators including explicit directories (D033), rejects NFC/case duplicates before root stripping, enforces hard streamed-byte ceilings, and warns when quota estimates are unavailable.
+- Atomic copy/replace, surviving-item progress and canonical export preserve items, text/segment refs, annotations, binding metadata and native-Blob bytes; text filename/ID and declared MIME mismatches fail without writes.
+- Verification: npm run check passes (430 tests/43 files), build passes (540 KB bundle-size warning), git diff --check passes; Chrome ZIP/folder/copy, IndexedDB readback, Replace keyboard trapping and Arabic 375px reports verified; independent review passed with all 60 reviewed hashes unchanged.
+- JSZip limitation: overflow rejects immediately, clears retained chunks and permanently pauses future compressed input; the current synchronous inflater push can still emit discarded output, so this is not hard CPU cancellation.
 
 ## Known issues / notes
 - Docs changed after the first pack: ARCHITECTURE, PACK_SPEC, DECISIONS, AGENTS, tasks 005-010.

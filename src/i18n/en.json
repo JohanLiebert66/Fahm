@@ -1,4 +1,88 @@
 {
+  "packImport": {
+    "title": "Import pack",
+    "zip": "Choose ZIP file",
+    "folder": "Choose folder",
+    "busy": "Working…",
+    "imported": "Pack imported.",
+    "failed": "Pack was not imported.",
+    "conflict": "A pack with this ID already exists.",
+    "validation": "Validation problem.",
+    "validationReason": {
+      "invalidField": "This field is missing or invalid.",
+      "unknownField": "An unknown field was ignored.",
+      "schemaVersion": "Unsupported pack schema version; supported version is 1.",
+      "duplicateId": "An ID is duplicated.",
+      "reference": "A referenced item, text, segment or asset does not exist.",
+      "assetAlreadyBound": "This asset is already bound.",
+      "itemId": "Item IDs may contain only Unicode letters, digits, hyphens and underscores, without dots or spaces.",
+      "packId": "Pack IDs may contain only lowercase Latin letters, digits and hyphens.",
+      "required": "A required value is missing or empty.",
+      "language": "At least one language is required.",
+      "offset": "Text offsets must be non-negative whole numbers.",
+      "span": "A span must have a positive length and remain inside its segment (UTF-16 offsets).",
+      "spanOrder": "Spans must be ordered within each segment.",
+      "overlap": "Spans must not overlap within a segment.",
+      "annotationText": "Annotation text must match the exact source span.",
+      "puzzleItem": "A puzzle binding must not specify an item.",
+      "bindingItem": "This binding role requires an item."
+    },
+    "errors": "Errors: {{count}}",
+    "warnings": "Warnings: {{count}}",
+    "copy": "Import as copy",
+    "replace": "Replace existing pack",
+    "replaceWarning": "Replacing deletes teacher edits and recordings in the existing pack. Export a backup first. Progress is kept for surviving item IDs.",
+    "confirm": "Continue import",
+    "cancel": "Cancel",
+    "backup": "Export backup first",
+    "backupReady": "Backup downloaded.",
+    "exportFailed": "Could not export a backup.",
+    "cancelled": "Import cancelled.",
+    "back": "Back to teacher tools",
+    "counts": {
+      "items": "Items: {{count}}",
+      "texts": "Texts: {{count}}",
+      "annotations": "Annotations: {{count}}",
+      "assets": "Assets: {{count}}",
+      "unbound": "Unbound assets: {{count}}"
+    },
+    "error": {
+      "path": "Unsafe or unsupported file path.",
+      "duplicate": "Duplicate file path.",
+      "archive": "The archive is invalid or contains a nested archive.",
+      "format": "Unsupported file format.",
+      "entries": "The pack exceeds the 2,000-entry limit.",
+      "total": "The pack exceeds the 250 MB expanded-size limit.",
+      "image": "An image exceeds the 5 MB limit.",
+      "audio": "An audio file exceeds the 10 MB limit or has an unsupported format.",
+      "read": "Could not read the selected pack. Please select it again.",
+      "json": "A required JSON file is missing or invalid.",
+      "binding": "An asset binding is invalid.",
+      "mime": "The file's declared media type does not match its extension.",
+      "textIdentity": "The text ID must match its JSON filename.",
+      "identity": "The pack identity is invalid.",
+      "conflict": "The pack changed during import. Please try again."
+    },
+    "warning": {
+      "quotaUnavailable": "Available storage could not be checked.",
+      "lowSpace": "Available storage is low. Export a backup or free space.",
+      "unbound": "{{count}} assets need manual matching."
+    }
+  },
+  "storage": {
+    "error": {
+      "quota": "There is not enough storage space.",
+      "unavailable": "Local storage is unavailable.",
+      "write": "Changes could not be saved.",
+      "invalidData": "The data could not be stored."
+    },
+    "action": {
+      "freeSpaceOrBackup": "Free storage space or export a backup, then try again.",
+      "useSupportedBrowser": "Use a supported browser with local storage enabled.",
+      "checkData": "Check the pack data and try again.",
+      "retryOrBackup": "Try again or export a backup of your existing data."
+    }
+  },
   "appName": "Fahm",
   "learn": "Learn",
   "play": "Play",

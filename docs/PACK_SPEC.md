@@ -130,7 +130,7 @@ Imported audio is accepted only for these pairs. Playback support differs by bro
 ## Import safety
 Archive and folder imports are bounded and validated BEFORE anything is written:
 - max 2000 entries; max 250 MB total uncompressed (count actual bytes read, not just headers); max 5 MB per image, 10 MB per audio;
-- reject absolute paths, `..`, backslashes, nested archives, entries outside the known folders, and duplicate paths (compared case-insensitively after NFC);
+- normalize backslashes to forward slashes, then validate: reject absolute paths, `..`, nested archives, entries outside the known folders, and duplicate paths (compared case-insensitively after NFC). This accepts archives made by Windows PowerShell 5.1 without weakening path checks;
 - validate everything first; write in ONE database transaction; on any failure nothing changes and the user gets a readable report.
 
 ## Re-import of an existing pack id

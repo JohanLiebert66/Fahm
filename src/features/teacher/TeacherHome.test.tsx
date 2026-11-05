@@ -11,6 +11,13 @@ function ModeWatcher() {
 }
 
 describe('TeacherHome', () => {
+  it('links to the pack import tool with a large touch target', () => {
+    render(<MemoryRouter><ModeProvider initialMode="teacher"><TeacherHome /></ModeProvider></MemoryRouter>);
+    const link = screen.getByRole('link', { name: 'Import pack' });
+    expect(link).toHaveAttribute('href', '/teacher/import');
+    expect(link.className).toContain('min-h-[48px]');
+    expect(link.className).toContain('min-w-[48px]');
+  });
   it('renders teacher placeholder and exit button with >= 48px touch target', () => {
     render(
       <MemoryRouter initialEntries={['/teacher']}>

@@ -34,6 +34,7 @@ Format: ID, decision, reason. Add new entries at the bottom. Do not re-debate se
 - D030 **`source` is always required** in pack.json; per-asset `credit`/`license` are optional in bindings and default to the pack license.
 - D031 **Game eligibility rules** (Match >= 4 items with distinct images; Quiz >= 4 items with distinct terms; Puzzle >= 1 image) are pure functions in `core/games`; games receive a `GameContext` that includes asset access.
 - D032 **Language fallback:** UI language, then pack language, then first available; each explanation renders with its own lang/dir, terms in `<bdi>`, references forced LTR.
+- D033 **Normalize backslashes, then validate import paths.** Windows PowerShell 5.1 ZIPs can use backslash separators. Normalize to forward slashes before root-folder handling, traversal checks and case-insensitive NFC duplicate detection; the same rules apply to ZIPs, folders and explicit binding paths.
 
 ## Open decisions (settle before the task that needs them)
 - O004 **Which Tanzil text variant:** Uthmani (matches the printed mushaf, more marks)

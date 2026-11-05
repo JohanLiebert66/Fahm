@@ -27,6 +27,17 @@ describe('App Shell', () => {
     localStorage.clear();
   });
 
+  it('opens the import tool for teachers', () => {
+    renderApp(['/teacher/import'], 'teacher');
+    expect(screen.getByRole('heading', { name: 'Import pack' })).toBeInTheDocument();
+  });
+
+  it('does not expose import tools to child mode through a direct URL', () => {
+    renderApp(['/teacher/import']);
+    expect(screen.queryByLabelText('Choose ZIP file')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Learn' })).toBeInTheDocument();
+  });
+
   it('renders the header with teacher entry button and language toggle in child mode', () => {
     renderApp();
 

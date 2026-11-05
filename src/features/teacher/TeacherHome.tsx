@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMode } from '../../app/ModeProvider';
 
 export function TeacherHome() {
@@ -27,6 +27,9 @@ export function TeacherHome() {
           <p className="text-slate-600 text-sm">{t('teacherHomeDescription')}</p>
         </div>
 
+        <Link to="/teacher/import" className="min-w-[48px] min-h-[48px] flex items-center rounded-xl p-3 bg-indigo-50">
+          {t('packImport.title')}
+        </Link>
         <button
           type="button"
           onClick={handleExit}

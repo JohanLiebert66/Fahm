@@ -6,6 +6,7 @@ import { useMode } from './ModeProvider';
 import { TeacherGate } from './TeacherGate';
 import { ChildHome } from './ChildHome';
 import { TeacherHome } from '../features/teacher/TeacherHome';
+import { ImportPack } from '../features/teacher/ImportPack';
 
 export function App() {
   const { t, i18n } = useTranslation();
@@ -62,6 +63,7 @@ export function App() {
               </TeacherGate>
             }
           />
+          <Route path="/teacher/import" element={<TeacherGate><ImportPack /></TeacherGate>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
