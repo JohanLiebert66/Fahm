@@ -66,5 +66,5 @@ describe('RTL / logical CSS compliance', () => {
     }
 
     expect(violations).toEqual([]);
-  });
+  }, 30_000);
 });

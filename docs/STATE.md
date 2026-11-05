@@ -4,7 +4,7 @@ Update this file at the end of every task (3-5 lines). It is the hand-off betwee
 
 ## Status
 - Phase: 1 in progress
-- Task 008 (Text normalization): complete; matching-only normalization and full checks passed.
+- Task 009 (Reader core): complete; pure tokenization/linking and full checks passed.
 - Next task: awaiting selection.
 
 ## Done
@@ -32,6 +32,16 @@ Update this file at the end of every task (3-5 lines). It is the hand-off betwee
 - Owner-approved final NFC resolves the retained-mark ordering regression U+0617 U+06E5 U+0619; PACK_SPEC normalization and D034 document it without widening removal ranges. Ordinary-input outputs remain unchanged.
 - Verification: npm run check passes lint, typecheck and all 732 tests across 45 files; normalization source/test are 40/186 lines. No commit.
 - Task 008b: step 2 strips exactly the 16 approved invisible format characters (including BOM, now removed rather than separating); PACK_SPEC/D035 updated; all 758 tests/45 files pass via npm run check, including 302 normalization tests, seeded idempotence and unchanged ordinary-input controls; no dependencies, extra transformations or commit.
+
+- Task 009: pure reader span helpers, Unicode tokenization and annotation-first linking preserve exact UTF-16 source slices; standalone marks/signs attach backwards, with non-linkable initial marks.
+- D036/PACK_SPEC record exact full/core annotation alignment, phrase merging, stable earlier-overlap precedence, offset-bearing collision/warning reports and unchanged overrides; override-only annotations use a reader-local type without changing pack schemas.
+- Synthetic fixture/inline tests cover source coverage, all U+06D6-U+06DE signs, diacritic matching, meaningful accents/symbols, phrase boundaries, invalid spans, overlaps, override fallback, frozen inputs and equivalent RTL/LTR offsets.
+- Verification: npm run check passes lint, typecheck and all 798 tests across 49 files; git diff --check passes. Reader source/test files are at most 96 lines; no dependencies, UI/storage changes or commit.
+
+- Task 009 core-span correction: retain letter-attached Mn/Mc marks, trim unbased edge marks and the named U+06D6-U+06DE pause/verse range; standalone signs extend full spans only, with tokenizer/linker/normalizer code unchanged.
+- All 32 vowel regressions pass; added direct-sign, leading-mark, dagger-alef/small-mark, spacing-mark, decomposed-Latin, supplementary-offset, vowel-core annotation and matching-equivalence coverage; spans cutting off a retained final vowel now warn as misaligned.
+- Differential check: 438 synthetic/fixture input cases compared, 107 changed results enumerated in the session artifact; token boundaries/text/kinds and automatic item ids unchanged across that corpus.
+- Verification: npm run check passes lint, typecheck and all 858 tests/50 files; RTL source-scan test alone now has a 30,000 ms timeout (earlier 5,383 ms timeout, isolated retry 22 ms, final suite 138 ms); no dependencies or commit.
 
 ## Known issues / notes
 - Docs changed after the first pack: ARCHITECTURE, PACK_SPEC, DECISIONS, AGENTS, tasks 005-010.
