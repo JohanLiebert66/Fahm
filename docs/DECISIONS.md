@@ -41,9 +41,12 @@ Format: ID, decision, reason. Add new entries at the bottom. Do not re-debate se
 - D036 **Reader annotation full/core alignment.** Every token also has a core span (token minus leading/trailing punctuation and marks). An annotation aligns if its span equals the token's full span OR its core span. A phrase annotation aligns if it starts at the first token's start or coreStart and ends at the last token's end or coreEnd. Otherwise it is ignored and reported as a warning. This permits punctuation/sign-adjacent occurrence links without changing source text. Core trimming includes edge symbols, U+06D6-U+06DE and exposed whitespace; phrase tokens keep full outer spans. Stable start ordering keeps the earlier accepted overlapping annotation; invalid spans warn instead of throwing. Overrides remain unchanged; override-only annotations use normal matching and warn `override-without-link` without a unique link. This optional item is reader-local; pack schema changes are outside task 009. Core spans serve highlighting and annotation alignment, retaining letter-attached Mn/Mc marks but trimming edge punctuation/symbols, unbased marks and `PAUSE_AND_VERSE_SIGNS_RANGE` (U+06D6-U+06DE) even directly after letters; standalone signs extend only full spans, while matching continues to use the edge-punctuation-stripped token through `normalizeText`.
 
 - D037 Per-occurrence-only explanations for an unlinked word need a design (e.g. an item flag disabling auto-matching); parked, not part of 010b. Per-occurrence overrides remain for already-linked words, in a later task.
+- D038 **Tanzil copyright notice:** The Tanzil copyright notice (docs/THIRD_PARTY_NOTICES.md) must be included with the text in every pack that contains Tanzil text, in pack exports and backups, and in the repo; the About screen links to tanzil.net and credits the Tanzil Project. Text is never changed (D016).
 
 ## Open decisions (settle before the task that needs them)
-- O004 **Which Tanzil text variant:** Uthmani (matches the printed mushaf, more marks)
-- O005 **Tanzil license re-check:** read http://tanzil.net/docs/license yourself and note the date in this file. Needed before task 011.
+(None currently open before 011)
 
 Resolved from the first list: O001 (D016), O002 (D017), O003 (D018).
+Resolved for 011:
+- O004 (resolved: Uthmani, with pause marks and sajdah signs on)
+- O005 (resolved: Hazem re-read the Tanzil license on 2026-11-05; terms match D016)

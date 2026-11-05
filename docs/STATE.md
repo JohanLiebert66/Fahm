@@ -3,8 +3,10 @@
 The hand-off between agents, models and chats. Update at the end of every task (3-5 lines); condense older entries when this file passes ~80 lines.
 
 ## Status
-- Done: tasks 000-009, 007b, 008b, 010a (read-only reader), 010b (teacher add explanation), 003b (teacher mode bar), 010c (image box scaling & isolation), 010d (teacher pack list with delete & picker pack id). 984 tests / 66 files pass; npm run check and build pass.
-- Next: 011 (Tanzil Al-Falaq pack, needs O004/O005).
+- Done: tasks 000-009, 007b, 008b, 010a (read-only reader), 010b (teacher add explanation), 003b (teacher mode bar), 010c (image box scaling & isolation), 010d (teacher pack list with delete & picker pack id), 011-pre (Tanzil notice & license logged). 984 tests / 66 files pass; npm run check and build pass.
+- 011a done: verified Tanzil hash, 6,236 verse records, all per-sura counts.
+- Inventory and recommendation: docs/TANZIL_INVENTORY.md. No normalization/core-trimming change needed for this export.
+- Next: 011b pack build.
 - Live site: https://johanliebert66.github.io/Fahm/ (GitHub Pages via Actions).
 
 ## What exists
@@ -16,6 +18,7 @@ The hand-off between agents, models and chats. Update at the end of every task (
 - 010b verified: tokenizer core spans/terms, injected collision-safe IDs, atomic item + annotation creation, empty/duplicate/overlap rejection, rollback, cancel/double submit, immediate links and database-reopen persistence; unavailable storage gives a clear cannot-save message. Child mode has no editing UI.
 - 010c verified: image box scales any picture (object-contain, max-w-full, max-h-64, w-auto h-auto, centered) with logical CSS without overflow, replaces broken/failed images with placeholder on error, and enforces image isolation to <img src="blob:..."> with zero <svg>/<object>/<embed> elements.
 - 010d verified: teacher pack list (/teacher) with pack title, id, localized date, item/text counts, empty state, and destructive delete dialog (Cancel initial focus, disabled while deleting, atomic deletePack, in-place update, typed storage error); reader picker displays subtle pack id to distinguish copies.
+- 011-pre verified: Tanzil terms of use recorded verbatim in docs/THIRD_PARTY_NOTICES.md (D038); O004 resolved (Uthmani with pause/sajdah marks); O005 resolved (license re-read on 2026-11-05).
 
 ## Known issues / limits
 - No way to edit a pack title currently in the UI.
@@ -26,10 +29,7 @@ The hand-off between agents, models and chats. Update at the end of every task (
 - 010a browser results still to confirm: Arabic RTL with diacritics, Tab navigation, reload on a reader URL, /teacher redirect in child mode.
 
 ## Open questions for Hazem
-- O004 Tanzil text variant (Uthmani recommended, or Simple) — before 011.
-- O005 Re-read the Tanzil license (CC BY 3.0, verbatim only, link to tanzil.net) and record the date in DECISIONS.md — before 011.
 - D017 Quran font: Cairo accepted only if the Al-Falaq text renders every mark correctly; otherwise an OFL Quran font for the text only — decide in 011.
-- 011 should include a character inventory of the real Tanzil text to decide whether mark stripping needs extending (U+0610-U+061A, Arabic Extended-A marks).
 
 ## Later phases
 Phase 4 binding + audio recorder; Phase 5 games (Match, Quiz, Puzzle); Phase 6 practice (ts-fsrs), profiles, backup/restore; Phase 7 PWA, accessibility, README, v0.1.
