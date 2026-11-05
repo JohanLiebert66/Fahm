@@ -103,7 +103,9 @@ Stem = filename up to the FIRST dot; the rest of the name is the role/order part
 An item named `card_2` and an item named `card` never collide: `card_2.png` is image of `card_2`; `card.2.png` is the second image of `card`.
 
 ## Text normalization (matching only, never for display)
-1. Unicode NFC. 2. Remove Arabic diacritics and Quranic marks (U+064B-U+065F, U+0670, U+06D6-U+06ED) and tatweel (U+0640). 3. Unify alef forms (أ إ آ ٱ -> ا). 4. Lowercase Latin; trim; collapse spaces/underscores/hyphens to one hyphen.
+1. Unicode NFC. 2. Remove Arabic diacritics and Quranic marks (U+064B-U+065F, U+0670, U+06D6-U+06ED) and tatweel (U+0640). 3. Unify alef forms (أ إ آ ٱ -> ا). 4. Lowercase Latin letters only; trim; collapse Unicode whitespace/underscores/hyphens to one hyphen, removing leading/trailing separators. 5. Unicode NFC again.
+The final NFC pass is needed because removing marks can leave adjacent combining marks out of canonical order.
+Step 2 also strips invisible format characters U+061C, U+200B-U+200F, U+202A-U+202E, U+2066-U+2069 and U+FEFF together with marks and tatweel, before alef unification and separator collapsing, for matching only.
 Not unified by default: ى/ي, ة/ه.
 
 ## Asset matching order (per stem)

@@ -4,7 +4,7 @@ Update this file at the end of every task (3-5 lines). It is the hand-off betwee
 
 ## Status
 - Phase: 1 in progress
-- Task 007 (Pack import/export): complete; full checks and final independent review passed.
+- Task 008 (Text normalization): complete; matching-only normalization and full checks passed.
 - Next task: awaiting selection.
 
 ## Done
@@ -26,6 +26,12 @@ Update this file at the end of every task (3-5 lines). It is the hand-off betwee
 - JSZip limitation: overflow rejects immediately, clears retained chunks and permanently pauses future compressed input; the current synchronous inflater push can still emit discarded output, so this is not hard CPU cancellation.
 - Task 007b: empty directories are skipped before path validation/file counting; safe ZIP/folder selections without pack.json report only bilingual noPack; unsafe files retain existing keys, with a separate injectable 10,000-raw-entry cap.
 - Verification: npm run check passes (456 tests/44 files), including directory/data/hostile-path regressions, default 10,000/10,001 raw-entry boundaries for ZIP/folder inputs, Windows-style ZIP import with database readback, i18n parity and emitted-key coverage; git diff --check passes. No new dependencies or commits.
+
+- Task 008: pure matching-only normalizeText and thin normalizeFilenameStem wrapper use named constants/precompiled regexes; empty output means no match; no dependencies, filename-parser or importer changes.
+- Added 276 synthetic normalization tests covering every removal-range member, decomposed/composed equivalence, Unicode separator edges, retained marks/digits, Latin-only lowercasing and 1,024 deterministic seeded inputs per export.
+- Owner-approved final NFC resolves the retained-mark ordering regression U+0617 U+06E5 U+0619; PACK_SPEC normalization and D034 document it without widening removal ranges. Ordinary-input outputs remain unchanged.
+- Verification: npm run check passes lint, typecheck and all 732 tests across 45 files; normalization source/test are 40/186 lines. No commit.
+- Task 008b: step 2 strips exactly the 16 approved invisible format characters (including BOM, now removed rather than separating); PACK_SPEC/D035 updated; all 758 tests/45 files pass via npm run check, including 302 normalization tests, seeded idempotence and unchanged ordinary-input controls; no dependencies, extra transformations or commit.
 
 ## Known issues / notes
 - Docs changed after the first pack: ARCHITECTURE, PACK_SPEC, DECISIONS, AGENTS, tasks 005-010.
