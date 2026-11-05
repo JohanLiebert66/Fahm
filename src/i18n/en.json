@@ -124,5 +124,18 @@
   "exitTeacherMode": "Exit teacher mode",
   "teacherHome": "Teacher home",
   "teacherBarNav": "Teacher mode navigation",
-  "teacherHomeDescription": "Teacher tools and settings will appear here."
+  "teacherHomeDescription": "Teacher tools and settings will appear here.",
+  "teacherPacks": {
+    "title": "Imported packs",
+    "empty": "No packs imported yet.",
+    "importedOn": "Imported {{date}}",
+    "texts": "Texts: {{count}}",
+    "items": "Items: {{count}}",
+    "delete": "Delete pack",
+    "deleting": "Deleting…",
+    "deleteTitle": "Delete pack",
+    "deleteWarning": "Are you sure you want to delete \"{{title}}\" ({{id}})? Its items, texts, annotations, images, audio and progress will be removed and cannot be undone.",
+    "confirmDelete": "Delete",
+    "cancelDelete": "Cancel"
+  }
 }

@@ -3,7 +3,7 @@
 The hand-off between agents, models and chats. Update at the end of every task (3-5 lines); condense older entries when this file passes ~80 lines.
 
 ## Status
-- Done: tasks 000-009, 007b, 008b, 010a (read-only reader), 010b (teacher add explanation), 003b (teacher mode bar), 010c (image box scaling & isolation). 966 tests / 63 files pass; npm run check and build pass.
+- Done: tasks 000-009, 007b, 008b, 010a (read-only reader), 010b (teacher add explanation), 003b (teacher mode bar), 010c (image box scaling & isolation), 010d (teacher pack list with delete & picker pack id). 984 tests / 66 files pass; npm run check and build pass.
 - Next: 011 (Tanzil Al-Falaq pack, needs O004/O005).
 - Live site: https://johanliebert66.github.io/Fahm/ (GitHub Pages via Actions).
 
@@ -15,8 +15,10 @@ The hand-off between agents, models and chats. Update at the end of every task (
 - Reader at /read and /read/:packId/:textId: exact stored text, linked word buttons, phrase selection, 1-3 segment window, image + explanation boxes, language fallback, read-only per-occurrence overrides, injectable asset URLs with revoke; teachers can add an explanation applying to every matching occurrence of an unlinked word.
 - 010b verified: tokenizer core spans/terms, injected collision-safe IDs, atomic item + annotation creation, empty/duplicate/overlap rejection, rollback, cancel/double submit, immediate links and database-reopen persistence; unavailable storage gives a clear cannot-save message. Child mode has no editing UI.
 - 010c verified: image box scales any picture (object-contain, max-w-full, max-h-64, w-auto h-auto, centered) with logical CSS without overflow, replaces broken/failed images with placeholder on error, and enforces image isolation to <img src="blob:..."> with zero <svg>/<object>/<embed> elements.
+- 010d verified: teacher pack list (/teacher) with pack title, id, localized date, item/text counts, empty state, and destructive delete dialog (Cancel initial focus, disabled while deleting, atomic deletePack, in-place update, typed storage error); reader picker displays subtle pack id to distinguish copies.
 
 ## Known issues / limits
+- No way to edit a pack title currently in the UI.
 - JSZip cannot interrupt a synchronous inflate; overflow rejects immediately and discards output, but it is not hard CPU cancellation.
 - jsdom Blobs do not round-trip through fake-indexeddb; real-browser Blob read-back verified manually.
 - Bundle > 500 kB warning (Phase 7: code-splitting).

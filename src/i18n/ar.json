@@ -124,5 +124,18 @@
   "exitTeacherMode": "الخروج من وضع المعلم",
   "teacherHome": "الرئيسية للمعلم",
   "teacherBarNav": "التنقل في وضع المعلم",
-  "teacherHomeDescription": "ستظهر أدوات المعلم والإعدادات هنا."
+  "teacherHomeDescription": "ستظهر أدوات المعلم والإعدادات هنا.",
+  "teacherPacks": {
+    "title": "الحزم المستوردة",
+    "empty": "لم يتم استيراد أي حزم بعد.",
+    "importedOn": "تم الاستيراد في {{date}}",
+    "texts": "النصوص: {{count}}",
+    "items": "العناصر: {{count}}",
+    "delete": "حذف الحزمة",
+    "deleting": "جارٍ الحذف…",
+    "deleteTitle": "حذف الحزمة",
+    "deleteWarning": "هل أنت متأكد من حذف \"{{title}}\" ({{id}})؟ ستتم إزالة عناصرها ونصوصها وتعليقاتها التوضيحية وصورها وملفاتها الصوتية والتقدم المحرز ولا يمكن التراجع عن ذلك.",
+    "confirmDelete": "حذف",
+    "cancelDelete": "إلغاء"
+  }
 }

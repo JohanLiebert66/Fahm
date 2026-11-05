@@ -31,6 +31,7 @@ export function ReaderPage({ db, windowSize, assetProvider, teacherMode = false 
             aria-label={`${packTitle} ${textTitle}`}
             className="min-h-[48px] min-w-[48px] rounded-2xl border border-indigo-200 bg-indigo-50 p-6 space-y-2 text-start focus-visible:ring-2 focus-visible:ring-indigo-500">
             <span className="block text-lg"><bdi>{localizedContent(pack.meta.title, i18n.language, pack.meta.lang)?.value}</bdi></span>
+            <span className="block text-sm text-slate-500 font-mono"><bdi>{pack.id}</bdi></span>
             <span className="block text-xl font-bold"><bdi>{localizedContent(text.title, i18n.language, pack.meta.lang)?.value}</bdi></span>
           </Link>;
         })}

@@ -17,11 +17,14 @@ function openText(packId = enPack.id, textId = enText.id) {
 beforeEach(async () => { db = await readerDatabase(); await changeLanguage('en'); });
 afterEach(async () => { cleanup(); await db.delete(); });
 
-it('lists both imported fixture texts with pack and text titles', async () => {
+it('lists both imported fixture texts with pack and text titles and shows the pack id', async () => {
   render(<MemoryRouter><ReaderPage db={db} /></MemoryRouter>);
-  expect(await screen.findByRole('link', { name: `${enPack.title.en} ${enText.title.en}` })).toHaveAttribute(
-    'href', `/read/${enPack.id}/${enText.id}`);
-  expect(screen.getByRole('link', { name: `${arPack.title.ar} ${arText.title.en}` })).toBeInTheDocument();
+  const enLink = await screen.findByRole('link', { name: `${enPack.title.en} ${enText.title.en}` });
+  expect(enLink).toHaveAttribute('href', `/read/${enPack.id}/${enText.id}`);
+  expect(enLink).toHaveTextContent(enPack.id);
+  const arLink = screen.getByRole('link', { name: `${arPack.title.ar} ${arText.title.en}` });
+  expect(arLink).toBeInTheDocument();
+  expect(arLink).toHaveTextContent(arPack.id);
 });
 
 it('selects a linked core, preserves exact source and leaves unlinked words as plain text', async () => {
