@@ -1,4 +1,17 @@
 {
+  "reader": {
+    "loading": "Getting your reading ready…",
+    "empty": "No reading here yet. Ask a grown-up to add a pack.",
+    "error": "We could not open your reading. Please try again.",
+    "missing": "This reading is no longer here. Choose another one.",
+    "previous": "Previous",
+    "next": "Next",
+    "back": "Choose a reading",
+    "imagePlaceholder": "A picture will appear here.",
+    "explainPlaceholder": "Tap a highlighted word to explore.",
+    "noExplanation": "No explanation yet.",
+    "audio": "Audio (not available yet)"
+  },
   "packImport": {
     "title": "Import pack",
     "zip": "Choose ZIP file",

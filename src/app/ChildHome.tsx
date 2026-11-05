@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Card } from '../ui/Card';
+import { useNavigate } from 'react-router-dom';
 
 interface ShellButton {
   id: string;
@@ -53,6 +54,7 @@ const MAIN_BUTTONS: ShellButton[] = [
 
 export function ChildHome() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-xl">
@@ -61,7 +63,7 @@ export function ChildHome() {
           key={btn.id}
           as="button"
           onClick={() => {
-            // Placeholder for future feature navigation
+            if (btn.id === 'readWithMe') navigate('/read');
           }}
           aria-label={t(btn.titleKey)}
           className={`flex flex-col items-center justify-center p-6 gap-3 min-h-[140px] text-center transition-all ${btn.colorClasses}`}

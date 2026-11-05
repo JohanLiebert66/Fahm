@@ -7,6 +7,7 @@ import { TeacherGate } from './TeacherGate';
 import { ChildHome } from './ChildHome';
 import { TeacherHome } from '../features/teacher/TeacherHome';
 import { ImportPack } from '../features/teacher/ImportPack';
+import { ReaderPage } from '../features/reader/ReaderPage';
 
 export function App() {
   const { t, i18n } = useTranslation();
@@ -55,6 +56,8 @@ export function App() {
       <main className="flex-1 flex flex-col items-center justify-center p-6">
         <Routes>
           <Route path="/" element={<ChildHome />} />
+          <Route path="/read" element={<ReaderPage />} />
+          <Route path="/read/:packId/:textId" element={<ReaderPage />} />
           <Route
             path="/teacher"
             element={
