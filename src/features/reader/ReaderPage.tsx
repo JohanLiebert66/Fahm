@@ -6,22 +6,22 @@ import { localizedContent } from './localizedContent';
 import { ReaderScreen } from './ReaderScreen';
 import type { AssetUrlProvider } from './readerData';
 
-interface ReaderPageProps { db?: FahmDatabase; windowSize?: number; assetProvider?: AssetUrlProvider }
+interface ReaderPageProps { db?: FahmDatabase; windowSize?: number; assetProvider?: AssetUrlProvider; teacherMode?: boolean }
 
-export function ReaderPage({ db, windowSize, assetProvider }: ReaderPageProps) {
+export function ReaderPage({ db, windowSize, assetProvider, teacherMode = false }: ReaderPageProps) {
   const { packId, textId } = useParams();
   const { t, i18n } = useTranslation();
   const loaded = useReaderData(db, packId, textId);
   return <section className="w-full max-w-4xl space-y-4 text-start">
     <h2 className="text-2xl font-bold">{t('readWithMe')}</h2>
     {!loaded ? <p role="status">{t('reader.loading')}</p>
-      : 'error' in loaded ? <p role="alert">{t('reader.error')}</p>
+      : 'error' in loaded ? <p role="alert">{t('reader.error')} {teacherMode && t('reader.addUnavailable')}</p>
       : packId && textId && (!loaded.data.packs[0] || !loaded.data.texts[0])
         ? <p role="alert">{t('reader.missing')} <Link to="/read" className="inline-flex min-h-[48px] items-center underline">{t('reader.back')}</Link></p>
       : packId && textId && loaded.data.packs[0] && loaded.data.texts[0]
         ? <ReaderScreen key={`${packId}/${textId}`} pack={loaded.data.packs[0].meta}
           text={loaded.data.texts[0]} data={loaded.data} windowSize={windowSize}
-          assets={assetProvider ?? loaded.assets} />
+          assets={assetProvider ?? loaded.assets} teacherMode={teacherMode} saveExplanation={loaded.saveExplanation} />
       : <div className="grid sm:grid-cols-2 gap-4">
         {loaded.data.texts.map(text => {
           const pack = loaded.data.packs.find(p => p.id === text.packId)!;

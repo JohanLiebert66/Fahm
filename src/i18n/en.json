@@ -10,7 +10,19 @@
     "imagePlaceholder": "A picture will appear here.",
     "explainPlaceholder": "Tap a highlighted word to explore.",
     "noExplanation": "No explanation yet.",
-    "audio": "Audio (not available yet)"
+    "audio": "Audio (not available yet)",
+    "addTitle": "Add explanation",
+    "addWord": "Word",
+    "addAppliesToAll": "This explanation applies to every occurrence of the word.",
+    "addMeaning": "Explanation",
+    "addLanguage": "Explanation language",
+    "addSave": "Save explanation",
+    "addCancel": "Cancel",
+    "addUnavailable": "Explanations cannot be saved in memory-only mode or when local storage is unavailable. Enable local storage and reopen this reading.",
+    "addEmptyTerm": "This word has no matchable text after normalization. Nothing was saved.",
+    "addDuplicateTerm": "This word already matches an existing item. Nothing was saved. Reopen the reading to see the latest links.",
+    "addOverlap": "This word overlaps an existing annotation. Nothing was saved.",
+    "addInvalid": "The explanation or selected word is invalid or has changed. Check the fields or reopen the reading. Nothing was saved."
   },
   "packImport": {
     "title": "Import pack",

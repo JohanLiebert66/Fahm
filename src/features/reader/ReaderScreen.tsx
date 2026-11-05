@@ -9,6 +9,8 @@ import { SegmentText } from './SegmentText';
 import { localizedContent } from './localizedContent';
 import type { AssetUrlProvider, ReaderData } from './readerData';
 import { useSelectedImage } from './useSelectedImage';
+import { AddExplanationPanel } from './AddExplanationPanel';
+import type { ReaderExplanationSave } from './useReaderData';
 
 export interface ReaderScreenProps {
   pack: Pack;
@@ -16,9 +18,11 @@ export interface ReaderScreenProps {
   data: ReaderData;
   assets: AssetUrlProvider;
   windowSize?: number;
+  teacherMode?: boolean;
+  saveExplanation?: ReaderExplanationSave;
 }
 
-export function ReaderScreen({ pack, text, data, assets, windowSize = 1 }: ReaderScreenProps) {
+export function ReaderScreen({ pack, text, data, assets, windowSize = 1, teacherMode = false, saveExplanation }: ReaderScreenProps) {
   const { t, i18n } = useTranslation();
   const size = Number.isFinite(windowSize) ? Math.max(1, Math.min(3, Math.floor(windowSize))) : 1;
   const [position, setPosition] = useState(0);
@@ -39,7 +43,7 @@ export function ReaderScreen({ pack, text, data, assets, windowSize = 1 }: Reade
       <h3 className="text-xl font-bold"><bdi>{localizedContent(text.title, i18n.language, pack.lang)?.value}</bdi></h3>
       {text.ref && <bdi dir="ltr" className="isolate inline-block text-sm text-slate-500">{text.ref}</bdi>}
       {text.segments.slice(start, start + size).map(segment => <SegmentText key={segment.id}
-        segment={segment} items={data.items} annotations={data.annotations}
+        segment={segment} items={data.items} annotations={data.annotations} teacherMode={teacherMode}
         selected={selected && { segmentId: selected.segmentId, start: selected.token.start }}
         onSelect={token => setSelected({ segmentId: segment.id, token })} />)}
     </div>
@@ -53,6 +57,12 @@ export function ReaderScreen({ pack, text, data, assets, windowSize = 1 }: Reade
         {t('reader.next')}
       </button>
     </nav>
+    {teacherMode && selected && !selected.token.itemId && selected.token.kind === 'word' &&
+      <AddExplanationPanel key={selectionKey} word={selected.token.text} packLanguage={pack.lang} packDirection={pack.dir}
+        onSave={saveExplanation && (values => saveExplanation({ ...values,
+          segmentId: selected.segmentId, token: selected.token }))}
+        onCancel={() => setSelected(undefined)}
+        onSaved={() => setSelected(current => current === selected ? undefined : current)} />}
     <div dir={pack.dir} data-reader-boxes className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-start">
       <ImageBox url={imageUrl} term={item?.term} />
       <ExplainBox term={item?.term} termLanguage={pack.lang} termDirection={pack.dir}

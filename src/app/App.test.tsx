@@ -1,9 +1,12 @@
+import 'fake-indexeddb/auto';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, cleanup } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { App } from './App';
 import { ModeProvider } from './ModeProvider';
 import { changeLanguage } from '../i18n';
+import { createDatabase } from '../storage/db';
+import { storageRecords } from '../../tests/storageFixtures';
 
 function renderApp(initialEntries = ['/'], initialMode: 'child' | 'teacher' = 'child') {
   return render(
@@ -36,6 +39,28 @@ describe('App Shell', () => {
     renderApp(['/teacher/import']);
     expect(screen.queryByLabelText('Choose ZIP file')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Learn' })).toBeInTheDocument();
+  });
+
+  it.each(['/read', '/read/synthetic-app/invented'])('wires teacher mode into the reader at %s and removes editing on exit', async path => {
+    vi.useRealTimers();
+    const db = createDatabase();
+    const pack = storageRecords('synthetic-app').pack;
+    const text = { packId: pack.id, id: 'invented', title: { en: 'Invented fixture' },
+      segments: [{ id: 's', text: 'zorpli' }] };
+    await db.packs.put(pack); await db.texts.put(text);
+    try {
+      renderApp([path], 'teacher');
+      if (path === '/read') fireEvent.click(await screen.findByRole('link', { name: `${pack.meta.title.en} ${text.title.en}` }));
+      fireEvent.click(await screen.findByRole('button', { name: 'zorpli' }));
+      expect(screen.getByRole('form', { name: 'Add explanation' })).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: 'Exit teacher mode' }));
+      expect(screen.queryByRole('form')).not.toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: 'Read With Me' }));
+      fireEvent.click(await screen.findByRole('link', { name: `${pack.meta.title.en} ${text.title.en}` }));
+      await screen.findByRole('heading', { name: text.title.en });
+      expect(screen.queryByRole('button', { name: 'zorpli' })).not.toBeInTheDocument();
+      expect(await db.items.count()).toBe(0); expect(await db.annotations.count()).toBe(0);
+    } finally { cleanup(); await db.delete(); }
   });
 
   it('renders the header with teacher entry button and language toggle in child mode', () => {

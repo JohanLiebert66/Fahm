@@ -59,8 +59,8 @@ export function App() {
       <main className="flex-1 flex flex-col items-center justify-center p-6">
         <Routes>
           <Route path="/" element={<ChildHome />} />
-          <Route path="/read" element={<ReaderPage />} />
-          <Route path="/read/:packId/:textId" element={<ReaderPage />} />
+          <Route path="/read" element={<ReaderPage teacherMode={mode === 'teacher'} />} />
+          <Route path="/read/:packId/:textId" element={<ReaderPage teacherMode={mode === 'teacher'} />} />
           <Route
             path="/teacher"
             element={
