@@ -1,7 +1,7 @@
 import { transferFailure } from './types';
 
 /** Inspect raw records before JSZip sanitizes or overwrites their names. No inflation. */
-export function zipDirectory(bytes: Uint8Array, maxEntries = 2000): string[] {
+export function zipDirectory(bytes: Uint8Array, maxEntries = 2000, maxRawEntries = 10000): string[] {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   const invalid = (): never => { throw transferFailure('packImport.error.archive'); };
   const u16 = (offset: number) => view.getUint16(offset, true);
@@ -21,9 +21,10 @@ export function zipDirectory(bytes: Uint8Array, maxEntries = 2000): string[] {
   const names: string[] = [];
   const seen = new Set<string>();
   let offset = start;
+  let rawEntries = 0;
   while (offset < end) {
     if (offset + 46 > end || u32(offset) !== 0x02014b50) invalid();
-    if (names.length >= Math.min(maxEntries, 2000)) throw transferFailure('packImport.error.entries');
+    if (++rawEntries > maxRawEntries) throw transferFailure('packImport.error.rawEntries');
     const flags = u16(offset + 8);
     const method = u16(offset + 10);
     const nameLength = u16(offset + 28);
@@ -36,9 +37,7 @@ export function zipDirectory(bytes: Uint8Array, maxEntries = 2000): string[] {
     let name: string;
     try { name = new TextDecoder('utf-8', { fatal: true }).decode(nameBytes); }
     catch { return invalid(); }
-    if (seen.has(name)) throw transferFailure('packImport.error.duplicate', name);
-    seen.add(name);
-    names.push(name);
+
     // Reject ZIP64 extras even if their sentinel values were omitted.
     let extra = offset + 46 + nameLength;
     const extraEnd = extra + extraLength;
@@ -57,8 +56,18 @@ export function zipDirectory(bytes: Uint8Array, maxEntries = 2000): string[] {
     try { localName = new TextDecoder('utf-8', { fatal: true }).decode(bytes.subarray(local + 30, local + 30 + localNameLength)); }
     catch { return invalid(); }
     if (localName.replaceAll('\\', '/').normalize('NFC') !== name.replaceAll('\\', '/').normalize('NFC')) invalid();
+    const trailingSlash = name.replaceAll('\\', '/').endsWith('/');
+    const directory = trailingSlash && u32(offset + 20) === 0 && u32(offset + 24) === 0
+      && u32(local + 18) === 0 && u32(local + 22) === 0;
+    if (!directory) {
+      if (trailingSlash) throw transferFailure('packImport.error.path', name);
+      if (names.length >= Math.min(maxEntries, 2000)) throw transferFailure('packImport.error.entries');
+      if (seen.has(name)) throw transferFailure('packImport.error.duplicate', name);
+      seen.add(name);
+      names.push(name);
+    }
     offset = next;
   }
-  if (offset !== end || names.length !== u16(end + 10)) invalid();
+  if (offset !== end || rawEntries !== u16(end + 10)) invalid();
   return names;
 }

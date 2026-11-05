@@ -41,11 +41,12 @@ describe('zipDirectory', () => {
   it('counts every actual central record including directories before inflating', async () => {
     const zip = new JSZip().file('folder/pack.json', '{}');
     const bytes = await zip.generateAsync({ type: 'uint8array' });
-    expect(() => zipDirectory(bytes, 1)).toThrow('packImport.error.entries');
+    expect(zipDirectory(bytes, 1, 2)).toEqual(['folder/pack.json']);
+    expect(() => zipDirectory(bytes, 1, 1)).toThrow('packImport.error.rawEntries');
   });
-  it('lists central-directory paths including explicit directories', async () => {
+  it('lists only files, excluding explicit directories', async () => {
     const zip = new JSZip().file('wrapped/pack.json', '{}');
     const bytes = await zip.generateAsync({ type: 'uint8array' });
-    expect(zipDirectory(bytes)).toEqual(['wrapped/', 'wrapped/pack.json']);
+    expect(zipDirectory(bytes)).toEqual(['wrapped/pack.json']);
   });
 });

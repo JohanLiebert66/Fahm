@@ -129,8 +129,10 @@ Imported audio is accepted only for these pairs. Playback support differs by bro
 
 ## Import safety
 Archive and folder imports are bounded and validated BEFORE anything is written:
-- max 2000 entries; max 250 MB total uncompressed (count actual bytes read, not just headers); max 5 MB per image, 10 MB per audio;
+- max 2000 file entries and a separate max 10,000 raw entries including directories (`packImport.error.rawEntries`); max 250 MB total uncompressed (count actual bytes read, not just headers); max 5 MB per image, 10 MB per audio;
+- skip empty directory entries (names ending in `/` after backslash normalization, zero size and no payload) before path validation and the file-entry count; skipped names, including duplicates, produce no path errors. A trailing slash with data is rejected, not skipped;
 - normalize backslashes to forward slashes, then validate: reject absolute paths, `..`, nested archives, entries outside the known folders, and duplicate paths (compared case-insensitively after NFC). This accepts archives made by Windows PowerShell 5.1 without weakening path checks;
+- unsafe file paths, nested archives and duplicate files retain their existing error keys and take priority over a missing manifest. Otherwise, no remaining files or no `pack.json` at the detected root produces only `packImport.error.noPack`, before unrelated location, format or JSON diagnostics; the same rule applies to folder-picker imports;
 - validate everything first; write in ONE database transaction; on any failure nothing changes and the user gets a readable report.
 
 ## Re-import of an existing pack id

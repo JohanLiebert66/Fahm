@@ -53,7 +53,7 @@ export function filenameBinding(path: string, itemIds: ReadonlySet<string>): Bin
   return Number.isSafeInteger(order) ? { path, item, role: 'image', order } : undefined;
 }
 
-export function normalizePackPaths(names: string[]): PathResult {
+export function normalizePackPaths(names: string[], requirePack = false): PathResult {
   const value = names.map((name) => name.replace(/\\/g, '/').normalize('NFC'));
   const errors: PackIssue[] = [];
   const rejected = new Set<number>();
@@ -70,6 +70,20 @@ export function normalizePackPaths(names: string[]): PathResult {
   const wrapped = value.includes(`${prefix}pack.json`)
     && value.every((path) => path.startsWith(prefix));
   const paths = wrapped ? value.map((path) => path.slice(prefix.length)) : value;
+  if (requirePack) {
+    const seen = new Set<string>();
+    value.forEach((path, index) => {
+      if (rejected.has(index)) return;
+      if (seen.has(path.toLowerCase())) {
+        errors.push({ file: names[index]!, path: '$', message: 'packImport.error.duplicate' });
+      }
+      seen.add(path.toLowerCase());
+    });
+    if (errors.length) return { ok: false, errors };
+    if (!paths.includes('pack.json')) {
+      return { ok: false, errors: [{ file: 'pack.json', path: '$', message: 'packImport.error.noPack' }] };
+    }
+  }
   const roots = new Set(['pack.json', 'items.json', 'bindings.json']);
   const folders = new Set(['texts', 'annotations', 'images', 'audio', 'puzzles']);
   const seen = new Set<string>();

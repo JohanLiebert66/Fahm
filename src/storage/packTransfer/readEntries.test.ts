@@ -10,8 +10,8 @@ describe('readEntries', () => {
   it('bounds raw folder count before consulting individual file metadata', async () => {
     const name = vi.fn(() => { throw new Error('metadata must not be read'); });
     const file = Object.defineProperty({}, 'name', { get: name });
-    await expect(readEntries([file] as File[], { limits: { entries: 0 } }))
-      .rejects.toMatchObject({ issues: [{ message: 'packImport.error.entries' }] });
+    await expect(readEntries([file] as File[], { limits: { rawEntries: 0 } }))
+      .rejects.toMatchObject({ issues: [{ message: 'packImport.error.rawEntries' }] });
     expect(name).not.toHaveBeenCalled();
   });
   it.each([null, 'not a source', 7, [null], [{ name: 'pack.json' }]])(

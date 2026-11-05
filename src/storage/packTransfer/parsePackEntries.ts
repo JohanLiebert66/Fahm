@@ -3,6 +3,14 @@ import { validatePack } from '../../core/pack/validate';
 import { normalizePackPaths } from '../../core/binding/filenames';
 
 export function parsePackEntries(entries: readonly { path: string; bytes: Uint8Array }[]): PackValidationResult {
+  entries = entries.filter(entry => !(entry.path.replaceAll('\\', '/').endsWith('/') && entry.bytes.length === 0));
+  const dataDirectory = entries.find(entry => entry.path.replaceAll('\\', '/').endsWith('/'));
+  if (dataDirectory) return { ok: false, warnings: [], errors: [
+    { file: dataDirectory.path, path: '$', message: 'packImport.error.path' },
+  ] };
+  const normalized = normalizePackPaths(entries.map(entry => entry.path), true);
+  if (!normalized.ok) return { ok: false, warnings: [], errors: normalized.errors };
+  entries = entries.map((entry, index) => ({ ...entry, path: normalized.value[index]! }));
   const json = new Map<string, unknown>();
   const errors: PackIssue[] = [];
   for (const entry of entries.filter(({ path }) => path.toLowerCase().endsWith('.json'))) {

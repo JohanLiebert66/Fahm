@@ -66,6 +66,17 @@ describe('filenameBinding', () => {
 });
 
 describe('normalizePackPaths', () => {
+  it('reports missing manifests only after safety and duplicate checks', () => {
+    expect(normalizePackPaths(['notes.txt', 'Demo/items.json'], true)).toEqual({ ok: false, errors: [
+      { file: 'pack.json', path: '$', message: 'packImport.error.noPack' },
+    ] });
+    expect(normalizePackPaths(['../bad', 'notes.txt'], true)).toEqual({ ok: false, errors: [
+      { file: '../bad', path: '$', message: 'packImport.error.path' },
+    ] });
+    expect(normalizePackPaths(['notes.txt', 'NOTES.txt'], true)).toEqual({ ok: false, errors: [
+      { file: 'NOTES.txt', path: '$', message: 'packImport.error.duplicate' },
+    ] });
+  });
   it('reports independent path, archive, format and duplicate failures together', () => {
     const result = normalizePackPaths(['../outside', 'images/payload.zip', 'images/card.exe',
       'images/Card.png', 'images/card.png', 'unknown/card.png']);

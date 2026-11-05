@@ -6,6 +6,16 @@ import { readZip } from './readZip';
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 describe('readZip', () => {
+  it.each([[], ['voc_test/'], ['one/', 'two\\', '../ignored/'], ['notes.txt', 'bundle/items.json']])(
+    'reports only noPack for safe files without a manifest: %j', async (...paths) => {
+      const zip = new JSZip();
+      for (const path of paths) zip.file(path, '', { createFolders: false });
+      const bytes = await zip.generateAsync({ type: 'uint8array' });
+      await expect(readZip(bytes)).rejects.toMatchObject({ issues: [
+        { file: 'pack.json', path: '$', message: 'packImport.error.noPack' },
+      ] });
+    },
+  );
   it.each(['both', 'central'] as const)('normalizes %s header separators including explicit Windows directories', async headers => {
     const bytes = await new JSZip().file('bundle/pack.json', '{}').file('bundle/items.json', '[]')
       .generateAsync({ type: 'uint8array' });
@@ -63,7 +73,7 @@ describe('readZip', () => {
     view.setUint16(bytes.length - 14, 1, true);
     view.setUint16(bytes.length - 12, 1, true);
     const load = vi.spyOn(JSZip, 'loadAsync');
-    await expect(readZip(bytes)).rejects.toMatchObject({ issues: [{ message: 'packImport.error.entries' }] });
+    await expect(readZip(bytes, { limits: { rawEntries: 2 } })).rejects.toMatchObject({ issues: [{ message: 'packImport.error.rawEntries' }] });
     expect(load).not.toHaveBeenCalled();
   });
 
@@ -83,7 +93,7 @@ describe('readZip', () => {
   });
 
   it('rejects a real ZIP at the first overflow chunk and ignores subsequent emissions', async () => {
-    const bytes = await new JSZip().file('images/large.png', new Uint8Array(300_000))
+    const bytes = await new JSZip().file('images/large.png', new Uint8Array(300_000)).file('pack.json', '{}')
       .generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
     const chunks: number[] = [];
     await expect(readZip(bytes, { limits: { imageBytes: 1000 },
@@ -108,7 +118,7 @@ describe('readZip', () => {
   });
 
   it('bounds actual inflated bytes even when uncompressed-size declarations lie', async () => {
-    const bytes = await new JSZip().file('images/x.png', new Uint8Array(300_000), { createFolders: false })
+    const bytes = await new JSZip().file('images/x.png', new Uint8Array(300_000), { createFolders: false }).file('pack.json', '{}')
       .generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
     const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     const central = view.getUint32(bytes.length - 6, true);

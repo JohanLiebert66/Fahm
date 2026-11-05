@@ -21,7 +21,7 @@ describe('readFolder', () => {
         size: { value: 1 }, stream: { value: () => stream },
       });
       const chunks = vi.fn();
-      await expect(readFolder([value], { limits: { imageBytes: 1000, audioBytes: 1000 }, onChunk: chunks }))
+      await expect(readFolder([value, file('pack.json', new Uint8Array())], { limits: { imageBytes: 1000, audioBytes: 1000 }, onChunk: chunks }))
         .rejects.toMatchObject({ issues: [{ message: path.startsWith('audio/')
           ? 'packImport.error.audio' : 'packImport.error.image' }] });
       expect(chunks.mock.calls).toEqual([[path, 16384]]);
@@ -36,7 +36,7 @@ describe('readFolder', () => {
     Object.defineProperty(value, 'stream', { value: undefined });
     const slice = vi.spyOn(value, 'slice');
     const chunks = vi.fn();
-    await expect(readFolder([value], { limits: { imageBytes: 1000 }, onChunk: chunks }))
+    await expect(readFolder([value, file('pack.json', new Uint8Array())], { limits: { imageBytes: 1000 }, onChunk: chunks }))
       .rejects.toMatchObject({ issues: [{ message: 'packImport.error.image' }] });
     expect(slice).toHaveBeenCalledTimes(1);
     expect(slice).toHaveBeenCalledWith(0, 16384);

@@ -2,7 +2,7 @@ import JSZip from 'jszip';
 import { mimeFromPath, normalizePackPaths } from '../../core/binding/filenames';
 import { entryByteLimit, resolveLimits } from '../../core/pack/limits';
 import { transferBytes } from './bytes';
-import { type ReadOptions, type TransferEntry, transferFailure } from './types';
+import { type ReadOptions, type TransferEntry, rawEntryLimit, transferFailure } from './types';
 import { zipDirectory } from './zipDirectory';
 
 type StreamedFile = JSZip.JSZipObject & {
@@ -58,16 +58,23 @@ export async function readZip(source: Blob | Uint8Array, options: ReadOptions = 
   let bytes: Uint8Array;
   try { bytes = source instanceof Uint8Array ? source : await transferBytes(source); }
   catch { throw transferFailure('packImport.error.read'); }
-  const names = zipDirectory(bytes, limits.entries);
-  const normalized = normalizePackPaths(names);
-  if (!normalized.ok) throw Object.assign(new Error('packImport.error.path'), { issues: normalized.errors });
+  const names = zipDirectory(bytes, limits.entries, rawEntryLimit(options));
+  const normalized = normalizePackPaths(names, true);
+  if (!normalized.ok && normalized.errors.some(issue => issue.message !== 'packImport.error.noPack')) {
+    throw Object.assign(new Error('packImport.error.path'), { issues: normalized.errors });
+  }
   let zip: JSZip;
   try { zip = await JSZip.loadAsync(bytes, { createFolders: false, checkCRC32: false }); }
   catch { throw transferFailure('packImport.error.archive'); }
-  if (Object.keys(zip.files).length !== names.length) throw transferFailure('packImport.error.duplicate');
-  const loaded = new Map(Object.values(zip.files).map(file =>
+
+  const loadedFiles = Object.values(zip.files).filter(file => !file.dir);
+  const decoded = normalizePackPaths(loadedFiles.map(file => file.unsafeOriginalName ?? file.name), true);
+  if (!decoded.ok) throw Object.assign(new Error('packImport.error.path'), { issues: decoded.errors });
+  if (!normalized.ok) throw Object.assign(new Error('packImport.error.noPack'), { issues: normalized.errors });
+  if (loadedFiles.length !== names.length) throw transferFailure('packImport.error.duplicate');
+  const loaded = new Map(loadedFiles.map(file =>
     [zipName(file.unsafeOriginalName ?? file.name, file.dir), file]));
-  if (loaded.size !== names.length) throw transferFailure('packImport.error.duplicate');
+
   for (const name of names) {
     if (!loaded.has(zipName(name))) {
       throw transferFailure('packImport.error.path', name);
@@ -77,7 +84,7 @@ export async function readZip(source: Blob | Uint8Array, options: ReadOptions = 
   const entries: TransferEntry[] = [];
   for (let i = 0; i < names.length; i++) {
     const file = loaded.get(zipName(names[i]!))!;
-    if (file.dir) continue;
+    if (file.dir) throw transferFailure('packImport.error.path', names[i]);
     const path = normalized.value[i]!;
     let size = 0;
     const content = await inflate(file, (chunk) => {

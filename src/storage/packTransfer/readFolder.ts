@@ -1,7 +1,7 @@
 import { mimeFromPath, normalizePackPaths } from '../../core/binding/filenames';
 import { entryByteLimit, resolveLimits } from '../../core/pack/limits';
 import { transferBytes } from './bytes';
-import { type ReadOptions, type TransferEntry, transferFailure } from './types';
+import { type ReadOptions, type TransferEntry, rawEntryLimit, transferFailure } from './types';
 
 async function readFile(file: File, path: string, accept: (chunk: Uint8Array) => void): Promise<Uint8Array> {
   const chunks: Uint8Array[] = [];
@@ -42,9 +42,14 @@ async function readFile(file: File, path: string, accept: (chunk: Uint8Array) =>
 
 export async function readFolder(files: readonly File[], options: ReadOptions = {}): Promise<TransferEntry[]> {
   const limits = resolveLimits(options.limits);
+  if (files.length > rawEntryLimit(options)) throw transferFailure('packImport.error.rawEntries');
+  const name = (file: File) => file.webkitRelativePath || (file as File & { relativePath?: string }).relativePath || file.name;
+  files = files.filter(file => !(name(file).replaceAll('\\', '/').endsWith('/') && file.size === 0));
   if (files.length > Math.min(limits.entries, 2000)) throw transferFailure('packImport.error.entries');
-  const names = files.map((file) => file.webkitRelativePath || (file as File & { relativePath?: string }).relativePath || file.name);
-  const normalized = normalizePackPaths(names);
+  const names = files.map(name);
+  const dataDirectory = names.find(path => path.replaceAll('\\', '/').endsWith('/'));
+  if (dataDirectory) throw transferFailure('packImport.error.path', dataDirectory);
+  const normalized = normalizePackPaths(names, true);
   if (!normalized.ok) throw Object.assign(new Error('packImport.error.path'), { issues: normalized.errors });
   const entries: TransferEntry[] = [];
   let total = 0;

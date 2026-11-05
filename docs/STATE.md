@@ -24,6 +24,8 @@ Update this file at the end of every task (3-5 lines). It is the hand-off betwee
 - Atomic copy/replace, surviving-item progress and canonical export preserve items, text/segment refs, annotations, binding metadata and native-Blob bytes; text filename/ID and declared MIME mismatches fail without writes.
 - Verification: npm run check passes (430 tests/43 files), build passes (540 KB bundle-size warning), git diff --check passes; Chrome ZIP/folder/copy, IndexedDB readback, Replace keyboard trapping and Arabic 375px reports verified; independent review passed with all 60 reviewed hashes unchanged.
 - JSZip limitation: overflow rejects immediately, clears retained chunks and permanently pauses future compressed input; the current synchronous inflater push can still emit discarded output, so this is not hard CPU cancellation.
+- Task 007b: empty directories are skipped before path validation/file counting; safe ZIP/folder selections without pack.json report only bilingual noPack; unsafe files retain existing keys, with a separate injectable 10,000-raw-entry cap.
+- Verification: npm run check passes (456 tests/44 files), including directory/data/hostile-path regressions, default 10,000/10,001 raw-entry boundaries for ZIP/folder inputs, Windows-style ZIP import with database readback, i18n parity and emitted-key coverage; git diff --check passes. No new dependencies or commits.
 
 ## Known issues / notes
 - Docs changed after the first pack: ARCHITECTURE, PACK_SPEC, DECISIONS, AGENTS, tasks 005-010.
