@@ -60,3 +60,34 @@ it('does not display late images after rapid taps or navigation to another segme
   unmount();
   expect(provider.revokeUrl).toHaveBeenCalledTimes(3);
 });
+
+it('applies scaling and sizing classes and replaces failed image with empty state', async () => {
+  const provider: AssetUrlProvider = { getUrl: vi.fn(async (_, id) => `blob:${id}`), revokeUrl: vi.fn() };
+  renderReader(db, { assetProvider: provider });
+  const pencil = await screen.findByRole('button', { name: enItems[0]!.term });
+  fireEvent.click(pencil);
+
+  const img = await screen.findByRole('img', { name: enItems[0]!.term });
+  expect(img).toHaveClass('object-contain', 'max-w-full', 'max-h-64', 'w-auto', 'h-auto');
+  expect(img.parentElement).toHaveClass('grid', 'place-items-center');
+
+  fireEvent.error(img);
+  expect(screen.queryByRole('img')).not.toBeInTheDocument();
+  expect(screen.getByText('A picture will appear here.')).toBeInTheDocument();
+});
+
+it('renders images only via <img src="blob:..."> with no <svg>, <object>, or <embed> elements in DOM', async () => {
+  // Simulating an SVG-bytes fixture asset arriving as a blob: URL
+  const provider: AssetUrlProvider = { getUrl: vi.fn(async () => 'blob:svg-fixture-asset'), revokeUrl: vi.fn() };
+  const { container } = renderReader(db, { assetProvider: provider });
+  fireEvent.click(await screen.findByRole('button', { name: enItems[0]!.term }));
+
+  const img = await screen.findByRole('img', { name: enItems[0]!.term });
+  expect(img.getAttribute('src')).toMatch(/^blob:/);
+  expect(container.querySelector('svg')).toBeNull();
+  expect(container.querySelector('object')).toBeNull();
+  expect(container.querySelector('embed')).toBeNull();
+  expect(document.querySelector('svg')).toBeNull();
+  expect(document.querySelector('object')).toBeNull();
+  expect(document.querySelector('embed')).toBeNull();
+});
