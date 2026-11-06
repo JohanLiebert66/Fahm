@@ -54,3 +54,20 @@ tasks/          one file per task
 
 ## When unsure
 Ask. Do not guess about pack format, Arabic text handling, or religious content. See docs/PACK_SPEC.md and docs/CONTENT_GUIDELINES.md.
+
+## Task habits (apply to every task)
+- Before adding anything (component, helper, fallback, context, storage function), check whether it already exists. Reuse it; say what you found in the plan.
+- Never compute text offsets or spans by hand. Take them from token start/end/coreStart/coreEnd (D036).
+- Test data is invented. No real Quran text, no pause signs or dagger alef in fixtures, tests or comments.
+- The plan lists the exact files you will touch. Anything outside that list needs approval before you edit it.
+- Report every file touched, anything jsdom cannot prove (as a browser checklist), and any test outside your area that changed.
+- A saved change is confirmed only after its transaction commits. A failed write leaves existing data unchanged.
+- Update STATE.md (3-5 lines). Add a DECISIONS.md entry (next free D-number) only for a real decision, and say so.
+- If you are unsure or a decision is missing, stop and ask. Do not invent schema fields.
+- Files stay at about 200 lines or less; split rather than grow.
+
+## Risk levels
+- GATED (core, storage, Unicode/Arabic, schema, recorder, backup): plan first, wait for "go".
+- FAST (simple UI, strings, CSS, docs): run the self-check below, then proceed without waiting.
+  Self-check: allowed files only, layer rule respected, both i18n files updated, logical CSS, no new dependencies, no real Quran text, tests included. If any item fails, stop and wait for "go".
+  Still report the plan in the first message and the full summary at the end.
