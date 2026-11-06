@@ -7,6 +7,10 @@ The hand-off between agents, models and chats. Update at the end of every task (
 - 011a done: verified Tanzil hash, 6,236 verse records, all per-sura counts.
 - Inventory and recommendation: docs/TANZIL_INVENTORY.md. No normalization/core-trimming change needed for this export.
 - 011b verified: packs/al-falaq/ rebuilds byte-identically; five source-byte-equal verses, LF-joined integrity sidecar, notice preserved through folder import/export/re-import and database reopen (D039); optional external ZIP is deterministic, never committed. No backup round-trip claimed.
+- 011b-fix done (D040): notice extracted from the verified downloaded file's own header; blank source lines 6237/6238 are outside it. All three notice copies are script-generated; documentation bytes outside the fence are unchanged.
+- Notice integrity: UTF-8/LF with exactly one trailing LF; noticeSha256 D52680DB446C36E9F7878C704E1DB6EEE16328F854671276FC63533FB73F3483. Independent extraction and a second rebuild verify all six artifacts byte-identically.
+- Verse integrity remains AB6D6E8E968748E1B43665E2F08AF76DCDC72EBCDCA189DB822AE64C638F566F; texts/al-falaq.json and items.json have identical before/after byte hashes.
+- Verification: npm run check passes (996 tests / 67 files), including 12 source-independent sample-pack tests and notice-preserving import/export/re-import with database reopen. Existing TeacherBar act warnings remain; D017 browser font approval is still pending. No commit.
 - Next: Hazem imports the sample at /teacher/import and checks all five verses at /read for D017 Cairo rendering approval.
 - Live site: https://johanliebert66.github.io/Fahm/ (GitHub Pages via Actions).
 

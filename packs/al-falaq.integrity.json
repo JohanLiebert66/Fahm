@@ -2,5 +2,6 @@
   "sha256": "AB6D6E8E968748E1B43665E2F08AF76DCDC72EBCDCA189DB822AE64C638F566F",
   "verseCount": 5,
   "sourceSha256": "6933E133DD56DB778C801BF738848454E43648105A151E8D84D86A7CAE39EC5F",
-  "algorithm": "SHA-256 of the five verse texts in verse order joined with one LF (U+000A), no trailing LF, encoded as UTF-8 without BOM."
+  "algorithm": "SHA-256 of the five verse texts in verse order joined with one LF (U+000A), no trailing LF, encoded as UTF-8 without BOM.",
+  "noticeSha256": "D52680DB446C36E9F7878C704E1DB6EEE16328F854671276FC63533FB73F3483"
 }

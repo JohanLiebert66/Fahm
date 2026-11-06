@@ -7,9 +7,11 @@ no items and no annotations. Titles use Latin script; content language is `ar`
 and direction is `rtl`. Teachers can add explanations after importing.
 
 Source: Tanzil Project, https://tanzil.net. Text license: Creative Commons
-Attribution 3.0; verbatim distribution only. The complete notice from
-`docs/THIRD_PARTY_NOTICES.md` is in `pack.json.description`, so the current
-import/export path preserves it. `al-falaq.NOTICE.txt` is a repo-reader copy.
+Attribution 3.0; verbatim distribution only. The complete notice is extracted
+from the downloaded file's own comment header (D040), never copied from chat
+or another page. It is carried in `pack.json.description`, so the current
+import/export path preserves it. `al-falaq.NOTICE.txt` and the fenced block in
+`docs/THIRD_PARTY_NOTICES.md` are generated repo-reader copies.
 Do not put sidecars inside the importable folder: its importer rejects them.
 Whole-app backup is not implemented; a backup round-trip has not been tested.
 
@@ -26,6 +28,16 @@ The script requires the exact source SHA-256 recorded in
 trimming, normalization, replacement or wrapping, then re-reads every pack file
 and compares each decoded verse's UTF-8 bytes with its original source slice.
 JSON is UTF-8 without BOM, with a trailing LF. No verse text is logged.
+
+The same command regenerates the description, notice sidecar, integrity record
+and documentation notice block; the document heading, intro and all bytes
+outside that block stay unchanged. Comment extraction removes only the leading
+`#` and one following space, preserving indentation, trailing whitespace and
+blank comment lines. Empty source lines inside the header stay in place; empty
+lines outside it are excluded. The verified source's two empty lines (6237 and
+6238) are outside the header. The notice uses LF and exactly one trailing LF.
+Missing comments or unexpected non-comment lines before the first verse fail
+without printing source content. Do not hand-edit any generated notice copy.
 
 Optional ZIP output must be outside this repository, in an existing directory:
 
@@ -46,11 +58,14 @@ npm run check
 
 The integrity algorithm is SHA-256 of the five verse texts in verse order,
 joined with exactly one LF byte (`0A`) between verses, no trailing LF, UTF-8
-without BOM. The sidecar records that hash, verse count and source-file hash;
-it contains no verse text. Tests compare text hashes, not printed text, and
+without BOM. The sidecar records that hash, verse count, source-file hash and
+`noticeSha256` (SHA-256 of the extracted notice's UTF-8 bytes, with LF endings
+and exactly one trailing LF); it contains no verse text. Tests require the
+description, notice sidecar and fenced documentation to match `noticeSha256`
+without reading the external source. Tests compare hashes, not printed text, and
 prove folder import, database reopen, export and re-import preserve each verse
 and the complete notice. Rebuilding from the verified source twice must leave
-all three pack files and both generated sidecars byte-identical.
+all three pack files, both generated sidecars and the documentation byte-identical.
 
 `packs/` is excluded from Prettier. Existing `.gitattributes` rule
 `* text=auto eol=lf` covers these JSON files and forces LF checkout even with

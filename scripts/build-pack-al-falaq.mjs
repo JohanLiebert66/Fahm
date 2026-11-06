@@ -1,6 +1,6 @@
 // Read verified source bytes only; never log source text or underlying errors.
 import { createHash } from 'node:crypto';
-import { mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { basename, dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -44,6 +44,33 @@ export function zipEntries(entries) {
   return Buffer.concat([...local, directory, end]);
 }
 
+export function extractNotice(bytes) {
+  const lines = utf8(bytes).split(/\r\n|\r|\n/u);
+  const comments = lines.flatMap((line, index) => line.startsWith('#') ? [index] : []);
+  if (!comments.length) stop('Missing source comment lines.');
+  let seenVerse = false;
+  lines.forEach((line, index) => {
+    if (line.startsWith('#') || line === '') return;
+    if (index > comments[0] && index < comments.at(-1)) {
+      stop(`Unexpected non-comment line inside notice block at line ${index + 1}.`);
+    }
+    if (!seenVerse && !/^[1-9]\d*\|[1-9]\d*\|.+$/u.test(line)) {
+      stop(`Unexpected non-comment line before first verse at line ${index + 1}.`);
+    }
+    seenVerse = true;
+  });
+  const notice = lines.slice(comments[0], comments.at(-1) + 1)
+    .filter(line => line.startsWith('#') || line === '')
+    .map(line => line.startsWith('#') ? line.replace(/^# ?/u, '') : line).join('\n');
+  return `${notice.replace(/\n*$/u, '')}\n`;
+}
+
+export function updateNoticeDocument(document, notice) {
+  const block = /(^```\r?\n)[\s\S]*?(^```(?=\r?$))/gmu;
+  if ([...document.matchAll(block)].length !== 1) stop('Expected exactly one fenced notice block.');
+  return document.replace(block, (_match, open, close) => `${open}${notice}${close}`);
+}
+
 function sourceVerses(bytes) {
   const actual = hash(bytes);
   if (actual !== sourceSha256) stop(`Source SHA-256 mismatch; actual ${actual}.`);
@@ -76,10 +103,11 @@ function build(sourcePath, zipPath) {
     const path = relative(realpathSync(root), zipFile);
     if (!(path.startsWith(`..${sep}`) || isAbsolute(path))) stop('ZIP output must be outside the repository.');
   }
-  const verses = sourceVerses(readFileSync(sourcePath));
-  const document = readFileSync(resolve(root, 'docs/THIRD_PARTY_NOTICES.md'), 'utf8').replace(/\r\n?/gu, '\n');
-  const notice = /^```\n([\s\S]*?)^```/mu.exec(document)?.[1];
-  if (!notice || !notice.startsWith('Tanzil Quran Text\n')) stop('Missing Tanzil notice.');
+  const source = readFileSync(sourcePath);
+  const verses = sourceVerses(source);
+  const notice = extractNotice(source);
+  const documentPath = resolve(root, 'docs/THIRD_PARTY_NOTICES.md');
+  const document = updateNoticeDocument(readFileSync(documentPath, 'utf8'), notice);
   const pack = {
     schemaVersion: 1, id: 'al-falaq', title: { en: 'Al-Falaq' }, lang: 'ar', dir: 'rtl',
     author: 'Tanzil Project', license: 'Creative Commons Attribution 3.0',
@@ -91,12 +119,18 @@ function build(sourcePath, zipPath) {
   };
   const integrity = {
     sha256: hash(Buffer.concat(verses.flatMap((bytes, index) => index ? [Buffer.from('\n'), bytes] : [bytes]))),
-    verseCount: 5, sourceSha256, algorithm,
+    verseCount: 5, sourceSha256, algorithm, noticeSha256: hash(Buffer.from(notice, 'utf8')),
   };
+  if (integrity.sha256 !== 'AB6D6E8E968748E1B43665E2F08AF76DCDC72EBCDCA189DB822AE64C638F566F') {
+    stop('Extracted verse-text SHA-256 mismatch.');
+  }
   const entries = [['pack.json', json(pack)], ['items.json', json([])], ['texts/al-falaq.json', json(text)]];
   const folder = resolve(root, 'packs/al-falaq');
   mkdirSync(resolve(folder, 'texts'), { recursive: true });
-  for (const [path, bytes] of entries) writeFileSync(resolve(folder, path), bytes);
+  for (const [path, bytes] of entries) {
+    const target = resolve(folder, path);
+    if (!existsSync(target) || !readFileSync(target).equals(bytes)) writeFileSync(target, bytes);
+  }
   // Re-read every JSON file and compare decoded payloads to the original byte slices.
   for (const [path, bytes] of entries) {
     const written = readFileSync(resolve(folder, path));
@@ -111,13 +145,20 @@ function build(sourcePath, zipPath) {
   if (hash(Buffer.from(saved.segments.map(segment => segment.text).join('\n'), 'utf8')) !== integrity.sha256) {
     stop('Written verse-text hash mismatch.');
   }
-  writeFileSync(resolve(root, 'packs/al-falaq.NOTICE.txt'), notice, 'utf8');
-  writeFileSync(resolve(root, 'packs/al-falaq.integrity.json'), json(integrity));
+  const generated = [
+    [resolve(root, 'packs/al-falaq.NOTICE.txt'), Buffer.from(notice, 'utf8')],
+    [resolve(root, 'packs/al-falaq.integrity.json'), json(integrity)],
+    [documentPath, Buffer.from(document, 'utf8')],
+  ];
+  for (const [path, bytes] of generated) {
+    writeFileSync(path, bytes);
+    if (!readFileSync(path).equals(bytes)) stop('Generated notice/integrity file read-back mismatch.');
+  }
   if (zipFile) {
     const readBack = entries.map(([path]) => [path, readFileSync(resolve(folder, path))]);
     writeFileSync(zipFile, zipEntries(readBack), { flag: 'wx' });
   }
-  console.log(`Built 5 verses; source-byte read-back PASS; verse-text SHA-256 ${integrity.sha256}.`);
+  console.log(`Built 5 verses; source-byte read-back PASS; verse-text SHA-256 ${integrity.sha256}; notice SHA-256 ${integrity.noticeSha256}.`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

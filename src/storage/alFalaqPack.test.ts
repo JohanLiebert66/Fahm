@@ -13,24 +13,23 @@ import { createDatabase } from './db';
 import { importPack } from './importPack';
 import { exportPack } from './exportPack';
 import { transferBytes } from './packTransfer/bytes';
-
 const root = resolve(import.meta.dirname, '../..');
 const folder = resolve(root, 'packs/al-falaq');
 const files = ['items.json', 'pack.json', 'texts/al-falaq.json'];
 const hash = (value: string | Uint8Array) => createHash('sha256').update(value).digest('hex').toUpperCase();
 const script = resolve(root, 'scripts/build-pack-al-falaq.mjs');
 const testFile = resolve(root, 'src/storage/alFalaqPack.test.ts');
+const noticeHash = () => (json(resolve(root, 'packs/al-falaq.integrity.json')) as { noticeSha256: string }).noticeSha256;
 function json(path: string): unknown {
   try { return JSON.parse(readFileSync(path, 'utf8')); }
   catch { throw new Error('Pack JSON could not be read/parsed; payload suppressed.'); }
 }
 function notice() {
-  const document = readFileSync(resolve(root, 'docs/THIRD_PARTY_NOTICES.md'), 'utf8').replace(/\r\n?/gu, '\n');
-  const value = /^```\n([\s\S]*?)^```/mu.exec(document)?.[1];
+  const document = readFileSync(resolve(root, 'docs/THIRD_PARTY_NOTICES.md'), 'utf8');
+  const value = /^```\r?\n([\s\S]*?)^```/mu.exec(document)?.[1];
   if (!value) throw new Error('Missing notice block');
   return value;
 }
-
 function packData() {
   return {
     pack: json(resolve(folder, 'pack.json')) as Pack,
@@ -39,7 +38,6 @@ function packData() {
     assets: [],
   };
 }
-
 it('provides an importable text-only sample that passes validatePack', () => {
   expect(files.every(path => existsSync(resolve(folder, path)))).toBe(true);
   const data = packData();
@@ -50,7 +48,6 @@ it('provides an importable text-only sample that passes validatePack', () => {
   expect(data.pack).toMatchObject({ id: 'al-falaq', lang: 'ar', dir: 'rtl' });
   expect(data.texts['al-falaq'].segments.length).toBe(5);
 });
-
 it('records the LF-joined verse integrity hash without requiring the external source', () => {
   const record = json(resolve(root, 'packs/al-falaq.integrity.json')) as {
     sha256: string; verseCount: number; sourceSha256: string; algorithm: string;
@@ -64,13 +61,52 @@ it('records the LF-joined verse integrity hash without requiring the external so
   expect(segments.map(segment => segment.ref)).toEqual(['113:1', '113:2', '113:3', '113:4', '113:5']);
   expect(segments.map(segment => segment.id)).toEqual(['1', '2', '3', '4', '5']);
 });
-
-it('carries the complete notice line by line in description and the repo sidecar', () => {
-  const lines = (value: string) => value.replace(/\r\n?/gu, '\n').split('\n').filter(line => line.trim());
-  expect(lines(packData().pack.description ?? '')).toEqual(lines(notice()));
-  expect(lines(readFileSync(resolve(root, 'packs/al-falaq.NOTICE.txt'), 'utf8'))).toEqual(lines(notice()));
+it('extracts synthetic comments without changing indentation, whitespace or blank lines', async () => {
+  const { extractNotice } = await import(/* @vite-ignore */ pathToFileURL(script).href);
+  for (const ending of ['\n', '\r\n', '\r']) {
+    const source = ['1|1|synthetic', '', '# ====  ', '#   indented  ', '#', '', '#\tkept\t', '# ===='];
+    expect(extractNotice(Buffer.from(source.join(ending))))
+      .toBe('====  \n  indented  \n\n\n\tkept\t\n====\n');
+  }
+  expect(extractNotice(Buffer.from('\n#notice\n##kept  \n# \n# end\n\n1|1|synthetic\n\n')))
+    .toBe('notice\n#kept  \n\nend\n');
 });
-
+it('rejects missing comments and unexpected non-comment lines without leaking synthetic input', async () => {
+  const { extractNotice } = await import(/* @vite-ignore */ pathToFileURL(script).href);
+  const cases = [
+    ['1|1|synthetic\n', 'Missing source comment lines.'],
+    ['sensitive synthetic\n1|1|synthetic\n# notice', 'Unexpected non-comment line before first verse at line 1.'],
+    ['# notice\n \n1|1|synthetic', 'Unexpected non-comment line before first verse at line 2.'],
+    ['1|1|synthetic\n# notice\nsensitive synthetic\n# end', 'Unexpected non-comment line inside notice block at line 3.'],
+  ] as const;
+  for (const [source, message] of cases) {
+    expect(() => extractNotice(Buffer.from(source)))
+      .toThrowError(Object.assign(new Error(message), { name: 'PackBuildError' }));
+  }
+});
+it('replaces only one fenced notice block and preserves all surrounding document bytes', async () => {
+  const { updateNoticeDocument } = await import(/* @vite-ignore */ pathToFileURL(script).href);
+  for (const ending of ['\n', '\r\n']) {
+    const prefix = `# Synthetic heading${ending}${ending}Synthetic intro.  ${ending}${ending}`;
+    const suffix = `${ending}Synthetic footer.  ${ending}`;
+    const document = `${prefix}\`\`\`${ending}old${ending}\`\`\`${suffix}`;
+    expect(updateNoticeDocument(document, 'new  \n\nend\n'))
+      .toBe(`${prefix}\`\`\`${ending}new  \n\nend\n\`\`\`${suffix}`);
+    for (const invalid of [prefix, document + document]) {
+      expect(() => updateNoticeDocument(invalid, 'new\n')).toThrow('Expected exactly one fenced notice block.');
+    }
+  }
+});
+it('matches the exact notice hash in description, sidecar and fenced documentation', () => {
+  expect(noticeHash()).toBe('D52680DB446C36E9F7878C704E1DB6EEE16328F854671276FC63533FB73F3483');
+  const values = [packData().pack.description ?? '', readFileSync(resolve(root, 'packs/al-falaq.NOTICE.txt')), notice()];
+  for (const value of values) {
+    expect(hash(value)).toBe(noticeHash());
+    const text = value.toString();
+    expect(text.includes('\r')).toBe(false);
+    expect(text.endsWith('\n') && !text.endsWith('\n\n')).toBe(true);
+  }
+});
 it('keeps only supported JSON files in the folder, with UTF-8, no BOM and a final LF', () => {
   const actual = readdirSync(folder, { recursive: true }).map(String)
     .filter(path => statSync(resolve(folder, path)).isFile()).map(path => path.replaceAll('\\', '/')).sort();
@@ -86,7 +122,6 @@ it('keeps only supported JSON files in the folder, with UTF-8, no BOM and a fina
   expect(packData().pack.license).toBe('Creative Commons Attribution 3.0');
   expect(packData().pack.source).toBe('Tanzil Project - https://tanzil.net');
 });
-
 it('round-trips the actual folder through import, export and re-import with notice and text hashes', async () => {
   const db = createDatabase(`al-falaq-${crypto.randomUUID()}`);
   vi.stubGlobal('Blob', NodeBlob);
@@ -109,7 +144,7 @@ it('round-trips the actual folder through import, export and re-import with noti
       expect(hash(stored[0]!.segments.map(segment => segment.text).join('\n')))
         .toBe(hash(expected.texts['al-falaq'].segments.map(segment => segment.text).join('\n')));
       const pack = await db.packs.get(packId);
-      expect(hash(pack?.meta.description ?? '')).toBe(hash(notice()));
+      expect(hash(pack?.meta.description ?? '')).toBe(noticeHash());
       expect(hash(JSON.stringify({ ...pack?.meta, id: expected.pack.id }))).toBe(hash(JSON.stringify(expected.pack)));
       expect(await db.items.where('packId').equals(packId).count()).toBe(0);
       expect(await db.annotations.where('packId').equals(packId).count()).toBe(0);
@@ -123,32 +158,30 @@ it('round-trips the actual folder through import, export and re-import with noti
     const bytes = await transferBytes(exported.value);
     const zip = await JSZip.loadAsync(bytes, { checkCRC32: true });
     const manifest = JSON.parse(await zip.file('pack.json')!.async('string')) as Pack;
-    expect(hash(manifest.description ?? '')).toBe(hash(notice()));
+    expect(hash(manifest.description ?? '')).toBe(noticeHash());
     expect((await importPack(db, bytes, { conflict: 'copy' })).status).toBe('imported');
     await db.close(); await db.open();
     await checkStored('al-falaq-2');
     await checkStored('al-falaq');
   } finally { vi.unstubAllGlobals(); await db.delete(); }
 });
-
 it('keeps script and test sources ASCII-only; real sample text is read and compared only by hashes', () => {
   for (const path of [script, testFile]) {
     expect(/[\u0080-\u{10FFFF}]/u.test(readFileSync(path, 'utf8'))).toBe(false);
   }
 });
-
 it('rejects unverified input without changing existing pack files or leaking input', () => {
-  const before = files.map(path => hash(readFileSync(resolve(folder, path))));
+  const targets = [...files.map(path => resolve(folder, path)), ...[
+    'packs/al-falaq.NOTICE.txt', 'packs/al-falaq.integrity.json', 'docs/THIRD_PARTY_NOTICES.md'].map(path => resolve(root, path))];
+  const before = targets.map(path => hash(readFileSync(path)));
   const child = spawnSync(process.execPath, [script, testFile], { encoding: 'utf8' });
   expect(child.status).toBe(1);
   expect(child.stdout).toBe('');
   expect(child.stderr).toMatch(/^Source SHA-256 mismatch; actual [A-F0-9]{64}\.\n$/u);
-  expect(files.map(path => hash(readFileSync(resolve(folder, path))))).toEqual(before);
+  expect(targets.map(path => hash(readFileSync(path)))).toEqual(before);
 });
-
 it('builds deterministic ZIP bytes with fixed timestamps using only supplied entries', async () => {
-  const scriptUrl = pathToFileURL(resolve(root, 'scripts/build-pack-al-falaq.mjs')).href;
-  const { zipEntries } = await import(/* @vite-ignore */ scriptUrl);
+  const { zipEntries } = await import(/* @vite-ignore */ pathToFileURL(script).href);
   const entries = [['pack.json', Buffer.from('{"synthetic":true}\n')]];
   const bytes = zipEntries(entries) as Buffer;
   expect(bytes.subarray(0, 4).toString('hex')).toBe('504b0304');
@@ -158,10 +191,8 @@ it('builds deterministic ZIP bytes with fixed timestamps using only supplied ent
   expect(zip.file('pack.json')!.date.toISOString()).toBe('1980-01-01T00:00:00.000Z');
   expect(Buffer.from(zipEntries(entries)).equals(bytes)).toBe(true);
 });
-
 it('rejects ZIP destinations inside the repository before reading the source', () => {
-  const child = spawnSync(process.execPath, [resolve(root, 'scripts/build-pack-al-falaq.mjs'),
-    resolve(root, 'src/storage/alFalaqPack.test.ts'), '--zip', resolve(root, 'packs/blocked.zip')], { encoding: 'utf8' });
+  const child = spawnSync(process.execPath, [script, testFile, '--zip', resolve(root, 'packs/blocked.zip')], { encoding: 'utf8' });
   expect(child.status).toBe(1);
   expect(child.stderr).toBe('ZIP output must be outside the repository.\n');
   expect(existsSync(resolve(root, 'packs/blocked.zip'))).toBe(false);
