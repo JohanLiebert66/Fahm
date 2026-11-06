@@ -3,7 +3,7 @@
 The hand-off between agents, models and chats. Update at the end of every task (3-5 lines); condense older entries when this file passes ~80 lines.
 
 ## Status
-- Done: tasks 000-009, 007b, 008b, 010a (read-only reader), 010b (teacher add explanation), 003b (teacher mode bar), 010c (image box scaling & isolation), 010d (teacher pack list with delete & picker pack id), 011-pre (Tanzil notice & license logged), 011b (verbatim sample folder pack), 011c (About screen with pack credits). 1008 tests / 69 files pass; npm run check and build pass.
+- Done: tasks 000-009, 007b, 008b, 010a (read-only reader), 010b (teacher add explanation), 003b (teacher mode bar), 010c (image box scaling & isolation), 010d (teacher pack list with delete & picker pack id), 011-pre (Tanzil notice & license logged), 011b (verbatim sample folder pack), 011c (About screen with pack credits), 011c-fix (linkify pack source text). 1018 tests / 70 files pass; npm run check and build pass.
 - 011a done: verified Tanzil hash, 6,236 verse records, all per-sura counts.
 - Inventory and recommendation: docs/TANZIL_INVENTORY.md. No normalization/core-trimming change needed for this export.
 - 011b verified: packs/al-falaq/ rebuilds byte-identically; five source-byte-equal verses, LF-joined integrity sidecar, notice preserved through folder import/export/re-import and database reopen (D039); optional external ZIP is deterministic, never committed. No backup round-trip claimed.
@@ -23,7 +23,7 @@ The hand-off between agents, models and chats. Update at the end of every task (
 - 010b verified: tokenizer core spans/terms, injected collision-safe IDs, atomic item + annotation creation, empty/duplicate/overlap rejection, rollback, cancel/double submit, immediate links and database-reopen persistence; unavailable storage gives a clear cannot-save message. Child mode has no editing UI.
 - 010c verified: image box scales any picture (object-contain, max-w-full, max-h-64, w-auto h-auto, centered) with logical CSS without overflow, replaces broken/failed images with placeholder on error, and enforces image isolation to <img src="blob:..."> with zero <svg>/<object>/<embed> elements.
 - 010d verified: teacher pack list (/teacher) with pack title, id, localized date, item/text counts, empty state, and destructive delete dialog (Cancel initial focus, disabled while deleting, atomic deletePack, in-place update, typed storage error); reader picker displays subtle pack id to distinguish copies.
-- 011c verified: /about route with app summary, MIT code license, and per-pack content credits (title, id, source, license, source link when present, and verbatim <pre dir="ltr"> copyright notice in collapsed <details>); accessible with >= 48px touch targets from ChildHome footer and TeacherHome; fully localized in Arabic and English; storage-unavailable resilience.
+- 011c & 011c-fix verified: /about route with app summary, MIT code license, and per-pack content credits (title, id, license, verbatim <pre dir="ltr"> notice in collapsed <details>); pack source text linkifies any embedded http(s) URLs with trailing-punctuation trimming and target="_blank"/rel="noopener noreferrer" while retaining exact surrounding text; accessible with >= 48px touch targets from ChildHome footer and TeacherHome; localized in Arabic and English; storage-unavailable resilience.
 - 011-pre verified: Tanzil terms of use recorded verbatim in docs/THIRD_PARTY_NOTICES.md (D038); O004 resolved (Uthmani with pause/sajdah marks); O005 resolved (license re-read on 2026-11-05).
 
 ## Known issues / limits

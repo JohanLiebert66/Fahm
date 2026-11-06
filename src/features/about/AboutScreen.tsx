@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { createDatabase, type FahmDatabase } from '../../storage/db';
 import { getPackSummaries, type PackSummary } from '../../storage/packSummary';
 import type { StorageError } from '../../storage/tx';
+import { parseSourceSegments } from './linkify';
 
 export function AboutScreen({ db: suppliedDb }: { db?: FahmDatabase }) {
   const { t, i18n } = useTranslation();
@@ -81,8 +82,8 @@ export function AboutScreen({ db: suppliedDb }: { db?: FahmDatabase }) {
                 pack.meta.title[pack.meta.lang] ??
                 Object.values(pack.meta.title)[0] ??
                 pack.id;
-              const isSourceUrl = /^https?:\/\//i.test(pack.meta.source.trim());
               const hasNotice = Boolean(pack.meta.description && pack.meta.description.trim().length > 0);
+              const sourceSegments = parseSourceSegments(pack.meta.source);
 
               return (
                 <li
@@ -96,20 +97,25 @@ export function AboutScreen({ db: suppliedDb }: { db?: FahmDatabase }) {
                     <span className="text-sm font-mono text-slate-500">
                       <bdi>{t('about.packId', { id: pack.id })}</bdi>
                     </span>
-                    <div className="text-sm text-slate-700 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <div className="text-sm text-slate-700 flex flex-wrap items-center gap-x-1.5 gap-y-1">
                       <span className="font-semibold">{t('about.sourceLabel')}:</span>
-                      {isSourceUrl ? (
-                        <a
-                          href={pack.meta.source.trim()}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline text-indigo-600 hover:text-indigo-800 break-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
-                        >
-                          {pack.meta.source}
-                        </a>
-                      ) : (
-                        <span>{pack.meta.source}</span>
-                      )}
+                      <span className="break-words">
+                        {sourceSegments.map((seg, idx) =>
+                          seg.type === 'link' ? (
+                            <a
+                              key={idx}
+                              href={seg.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="underline text-indigo-600 hover:text-indigo-800 break-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
+                            >
+                              {seg.text}
+                            </a>
+                          ) : (
+                            <span key={idx}>{seg.text}</span>
+                          )
+                        )}
+                      </span>
                     </div>
                     <div className="text-sm text-slate-700 flex items-center gap-2">
                       <span className="font-semibold">{t('about.licenseLabel')}:</span>

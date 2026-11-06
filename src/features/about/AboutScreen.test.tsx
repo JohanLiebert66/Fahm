@@ -83,6 +83,20 @@ describe('AboutScreen', () => {
     expect(screen.getByText('Synthetic non-url source attribution')).toBeInTheDocument();
   });
 
+  it('linkifies URLs embedded inside source text with target _blank and rel noopener noreferrer', async () => {
+    const rowMixed = storageRecords('pack-mixed-source');
+    rowMixed.pack.meta.source = 'Example Org - https://example.org';
+    await db.packs.add(rowMixed.pack);
+
+    renderAbout();
+
+    const link = await screen.findByRole('link', { name: 'https://example.org' });
+    expect(link).toHaveAttribute('href', 'https://example.org');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(screen.getByText(/Example Org -/)).toBeInTheDocument();
+  });
+
   it('renders copyright notice in collapsed details in a pre with dir ltr preserving exact whitespace', async () => {
     const noticeText = [
       'PLEASE DO NOT MODIFY THIS NOTICE',
