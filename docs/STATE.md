@@ -3,10 +3,11 @@
 The hand-off between agents, models and chats. Update at the end of every task (3-5 lines); condense older entries when this file passes ~80 lines.
 
 ## Status
-- Done: tasks 000-009, 007b, 008b, 010a (read-only reader), 010b (teacher add explanation), 003b (teacher mode bar), 010c (image box scaling & isolation), 010d (teacher pack list with delete & picker pack id), 011-pre (Tanzil notice & license logged). 984 tests / 66 files pass; npm run check and build pass.
+- Done: tasks 000-009, 007b, 008b, 010a (read-only reader), 010b (teacher add explanation), 003b (teacher mode bar), 010c (image box scaling & isolation), 010d (teacher pack list with delete & picker pack id), 011-pre (Tanzil notice & license logged), 011b (verbatim sample folder pack). 993 tests / 67 files pass; npm run check and build pass.
 - 011a done: verified Tanzil hash, 6,236 verse records, all per-sura counts.
 - Inventory and recommendation: docs/TANZIL_INVENTORY.md. No normalization/core-trimming change needed for this export.
-- Next: 011b pack build.
+- 011b verified: packs/al-falaq/ rebuilds byte-identically; five source-byte-equal verses, LF-joined integrity sidecar, notice preserved through folder import/export/re-import and database reopen (D039); optional external ZIP is deterministic, never committed. No backup round-trip claimed.
+- Next: Hazem imports the sample at /teacher/import and checks all five verses at /read for D017 Cairo rendering approval.
 - Live site: https://johanliebert66.github.io/Fahm/ (GitHub Pages via Actions).
 
 ## What exists
@@ -33,3 +34,4 @@ The hand-off between agents, models and chats. Update at the end of every task (
 
 ## Later phases
 Phase 4 binding + audio recorder; Phase 5 games (Match, Quiz, Puzzle); Phase 6 practice (ts-fsrs), profiles, backup/restore; Phase 7 PWA, accessibility, README, v0.1.
+- Phase 6: Whole-app backup must carry pack.json (including the Tanzil notice) unchanged — D038.

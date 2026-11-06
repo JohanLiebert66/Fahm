@@ -42,6 +42,10 @@ Format: ID, decision, reason. Add new entries at the bottom. Do not re-debate se
 
 - D037 Per-occurrence-only explanations for an unlinked word need a design (e.g. an item flag disabling auto-matching); parked, not part of 010b. Per-occurrence overrides remain for already-linked words, in a later task.
 - D038 **Tanzil copyright notice:** The Tanzil copyright notice (docs/THIRD_PARTY_NOTICES.md) must be included with the text in every pack that contains Tanzil text, in pack exports and backups, and in the repo; the About screen links to tanzil.net and credits the Tanzil Project. Text is never changed (D016).
+- D039 **Tanzil sample pack notice, integrity and test exception.** Store the full notice in the existing `pack.json.description` field: no field-length cap applies and no current screen renders description; real folder import, export and re-import preserve it. Keep repo-reader notice and integrity sidecars beside, not inside, `packs/al-falaq/`, which contains only importer-supported files.
+  - Integrity: SHA-256 of the five verse texts in verse order joined with one LF (U+000A), no trailing LF, encoded as UTF-8 without BOM. The sidecar records this hash, verse count, source SHA-256 and algorithm; no verse text. Rebuild verifies the approved source hash and re-reads written pack files, comparing each verse's UTF-8 bytes to its original source slice.
+  - No committed ZIP. The Node-built-ins-only builder may write a deterministic ZIP with fixed timestamps to an external path via `--zip`; folder import remains the default. Whole-app backup is not implemented, so pack-transfer tests are not a backup round-trip claim.
+  - Test exception: `src/storage/alFalaqPack.test.ts` may read the committed sample pack and compare actual verse text only by hashes, without embedding or printing it. Script and test source files contain no Arabic characters; titles are Latin-script-only. Synthetic fixtures remain synthetic. The notice is checked line by line against `docs/THIRD_PARTY_NOTICES.md`, ignoring blank lines.
 
 ## Open decisions (settle before the task that needs them)
 (None currently open before 011)
