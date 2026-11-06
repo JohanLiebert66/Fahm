@@ -49,6 +49,7 @@ Format: ID, decision, reason. Add new entries at the bottom. Do not re-debate se
 - D040 **Downloaded-file notice is authoritative.** Always extract the notice from the verified downloaded Tanzil file's own comment header; a notice copied from chat, another page or elsewhere is not acceptable. Remove only the leading `#` and one following space, preserving indentation, trailing whitespace and internal blank lines; retain empty source lines within the header, not outside it. Encode as UTF-8 with LF and exactly one trailing LF.
   - The builder regenerates `pack.json.description`, `packs/al-falaq.NOTICE.txt`, `packs/al-falaq.integrity.json` and only the fenced notice block in `docs/THIRD_PARTY_NOTICES.md`; its heading, intro and surrounding bytes remain unchanged.
   - Record `noticeSha256` over those exact notice bytes; source-independent tests require all three copies and import/export/re-import results to match it. This supersedes D039's blank-line-insensitive notice comparison. Verse bytes and the D039 verse hash remain unchanged.
+- D041 **Quran text font: Cairo accepted for the Al-Falaq pack.** Rendering test on 2026-11-06 (Chrome, desktop, English and Arabic UI): marks, shadda, tanween, small marks and dagger alef sit on their letters and are legible in verses 1-5. Re-test on the target tablet in Phase 7 and when adding any new surah. If a mark fails, use an OFL Quran font such as Amiri Quran for the text only; Cairo stays the UI font. Closes D017.
 
 ## Open decisions (settle before the task that needs them)
 (None currently open before 011)

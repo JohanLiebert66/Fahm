@@ -137,5 +137,19 @@
     "deleteWarning": "Are you sure you want to delete \"{{title}}\" ({{id}})? Its items, texts, annotations, images, audio and progress will be removed and cannot be undone.",
     "confirmDelete": "Delete",
     "cancelDelete": "Cancel"
+  },
+  "about": {
+    "title": "About Fahm",
+    "description": "An open-source app to explore and learn with rich multimedia packs.",
+    "codeLicense": "Code licensed under the MIT License.",
+    "contentCredits": "Content credits",
+    "noPacks": "No packs imported yet.",
+    "packId": "ID: {{id}}",
+    "source": "Source: {{source}}",
+    "sourceLabel": "Source",
+    "license": "License: {{license}}",
+    "licenseLabel": "License",
+    "copyrightNotice": "Copyright notice",
+    "back": "Back"
   }
 }

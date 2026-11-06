@@ -35,6 +35,21 @@ describe('TeacherHome', () => {
     await screen.findByText('No packs imported yet.');
   });
 
+  it('links to /about with a large touch target', async () => {
+    render(
+      <MemoryRouter>
+        <ModeProvider initialMode="teacher">
+          <TeacherHome db={db} />
+        </ModeProvider>
+      </MemoryRouter>
+    );
+    const link = screen.getByRole('link', { name: 'About Fahm' });
+    expect(link).toHaveAttribute('href', '/about');
+    expect(link.className).toContain('min-h-[48px]');
+    expect(link.className).toContain('min-w-[48px]');
+    await screen.findByText('No packs imported yet.');
+  });
+
   it('renders teacher placeholder and does not render a local exit button', async () => {
     render(
       <MemoryRouter initialEntries={['/teacher']}>

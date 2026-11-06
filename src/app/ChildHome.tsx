@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Card } from '../ui/Card';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface ShellButton {
   id: string;
@@ -57,21 +57,31 @@ export function ChildHome() {
   const navigate = useNavigate();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-xl">
-      {MAIN_BUTTONS.map((btn) => (
-        <Card
-          key={btn.id}
-          as="button"
-          onClick={() => {
-            if (btn.id === 'readWithMe') navigate('/read');
-          }}
-          aria-label={t(btn.titleKey)}
-          className={`flex flex-col items-center justify-center p-6 gap-3 min-h-[140px] text-center transition-all ${btn.colorClasses}`}
+    <div className="flex flex-col items-center gap-6 w-full max-w-xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+        {MAIN_BUTTONS.map((btn) => (
+          <Card
+            key={btn.id}
+            as="button"
+            onClick={() => {
+              if (btn.id === 'readWithMe') navigate('/read');
+            }}
+            aria-label={t(btn.titleKey)}
+            className={`flex flex-col items-center justify-center p-6 gap-3 min-h-[140px] text-center transition-all ${btn.colorClasses}`}
+          >
+            {btn.icon}
+            <span className="text-xl font-bold">{t(btn.titleKey)}</span>
+          </Card>
+        ))}
+      </div>
+      <footer className="w-full flex items-center justify-center mt-2">
+        <Link
+          to="/about"
+          className="min-w-[48px] min-h-[48px] inline-flex items-center justify-center text-sm text-slate-500 hover:text-slate-700 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-lg px-3 py-2 transition-colors"
         >
-          {btn.icon}
-          <span className="text-xl font-bold">{t(btn.titleKey)}</span>
-        </Card>
-      ))}
+          {t('about.title')}
+        </Link>
+      </footer>
     </div>
   );
 }

@@ -27,6 +27,7 @@ describe('App Shell', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     localStorage.clear();
   });
 
@@ -171,5 +172,19 @@ describe('App Shell', () => {
     expect(langToggle).toHaveTextContent('العربية');
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Fahm');
     expect(screen.getByText('Learn')).toBeInTheDocument();
+  });
+
+  it('opens the about screen in child mode without teacher gate', async () => {
+    renderApp(['/about'], 'child');
+    expect(await screen.findByRole('heading', { level: 2, name: 'Fahm' })).toBeInTheDocument();
+    expect(screen.getByText('Content credits')).toBeInTheDocument();
+  });
+
+  it('navigates from child home footer to /about', async () => {
+    renderApp(['/'], 'child');
+    const aboutLink = screen.getByRole('link', { name: 'About Fahm' });
+    expect(aboutLink).toHaveAttribute('href', '/about');
+    fireEvent.click(aboutLink);
+    expect(await screen.findByText('Content credits')).toBeInTheDocument();
   });
 });

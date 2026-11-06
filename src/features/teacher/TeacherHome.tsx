@@ -22,12 +22,20 @@ export function TeacherHome({ db }: { db?: FahmDatabase }) {
           </div>
         </div>
 
-        <Link
-          to="/teacher/import"
-          className="min-w-[48px] min-h-[48px] inline-flex items-center justify-center rounded-xl px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold shadow-sm transition-colors shrink-0"
-        >
-          {t('packImport.title')}
-        </Link>
+        <div className="flex items-center gap-3 shrink-0">
+          <Link
+            to="/about"
+            className="min-w-[48px] min-h-[48px] inline-flex items-center justify-center rounded-xl px-4 py-2 border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold shadow-sm transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          >
+            {t('about.title')}
+          </Link>
+          <Link
+            to="/teacher/import"
+            className="min-w-[48px] min-h-[48px] inline-flex items-center justify-center rounded-xl px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold shadow-sm transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          >
+            {t('packImport.title')}
+          </Link>
+        </div>
       </div>
 
       <section className="w-full" aria-labelledby="teacher-packs-heading">
